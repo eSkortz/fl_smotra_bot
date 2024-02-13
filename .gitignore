@@ -1,0 +1,7 @@
+*temp_files
+__pycache__/
+.vscode/
+.DS_Store
+.env
+alembic.ini
+temp/
