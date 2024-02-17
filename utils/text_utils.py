@@ -1,7 +1,7 @@
-from db.orm.schema_public import Cars
+from db.orm.schema_public import Cars, UserPointers
 
 
-BOOL_TO_STATUS_ADDS = {True: "включено ✅", False: "выключено ❌"}
+BOOL_TO_STATUS_ADDS = {True: "вкл ✅", False: "выкл ❌"}
 
 CARS_CLASSIFICATION = {
     "audi": {
@@ -62,6 +62,18 @@ EMOJI_BY_ADDS_CLASS = {
     "global": "📊",
 }
 
+CHAPTER_CLASSIFICATION = {
+    "transport": {"emoji": "🚗", "name": "Транспорт"},
+    "numbers": {"emoji": "🎱", "name": "Номера"},
+    "homes": {"emoji": "🏠", "name": "Дома"},
+    "business": {"emoji": "🏦", "name": "Бизнесы"},
+    "clothes": {"emoji": "🥋", "name": "Одежда"},
+    "weapon": {"emoji": "🔫", "name": "Оружие"},
+    "loot": {"emoji": "📦", "name": "Лут-предметы"},
+    "services": {"emoji": "💵", "name": "Услуги"},
+    "global": {"emoji": "📊", "name": "Торговая общий"},
+}
+
 
 def batch_price_generator(price_str: str) -> str:
     try:
@@ -114,3 +126,25 @@ def get_text_for_fishing(depth_tag: str) -> str:
     with open(f"src/fishing/{depth_tag}.txt", "r", encoding="utf-8") as file:
         content = file.read()
         return content
+    
+
+def pointer_by_chapter_name(pointers_model: UserPointers, chapter_name: str) -> str:
+    match chapter_name:
+        case "transport":
+            return BOOL_TO_STATUS_ADDS[pointers_model.transport_pointer]
+        case "numbers":
+            return BOOL_TO_STATUS_ADDS[pointers_model.numbers_pointer]
+        case "homes":
+            return BOOL_TO_STATUS_ADDS[pointers_model.homes_pointer]
+        case "business":
+            return BOOL_TO_STATUS_ADDS[pointers_model.business_pointer]
+        case "clothes":
+            return BOOL_TO_STATUS_ADDS[pointers_model.clothes_pointer]
+        case "weapon":
+            return BOOL_TO_STATUS_ADDS[pointers_model.weapon_pointer]
+        case "loot":
+            return BOOL_TO_STATUS_ADDS[pointers_model.loot_pointer]
+        case "services":
+            return BOOL_TO_STATUS_ADDS[pointers_model.services_pointer]
+        case "global":
+            return BOOL_TO_STATUS_ADDS[pointers_model.global_pointer]
