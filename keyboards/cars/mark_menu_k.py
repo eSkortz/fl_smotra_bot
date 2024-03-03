@@ -5,6 +5,7 @@ from aiogram import types
 from config import engine_async
 from db.oop.alchemy_di_async import DBWorkerAsync
 from db.orm.schema_public import Cars
+
 from utils.text_utils import batch_price_generator, CARS_CLASSIFICATION
 
 

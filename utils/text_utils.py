@@ -1,7 +1,7 @@
 from db.orm.schema_public import Cars, UserPointers
 
 
-BOOL_TO_STATUS_ADDS = {True: "вкл ✅", False: "выкл ❌"}
+BOOL_TO_STATUS_ADDS = {True: "✅ вкл", False: "❌ выкл"}
 
 CARS_CLASSIFICATION = {
     "audi": {
@@ -50,28 +50,70 @@ CARS_CLASSIFICATION = {
     },
 }
 
-EMOJI_BY_ADDS_CLASS = {
-    "transport": "🚗",
-    "numbers": "🎱",
-    "homes": "🏠",
-    "business": "🏦",
-    "clothes": "🥋",
-    "weapon": "🔫",
-    "loot": "📦",
-    "services": "💵",
-    "global": "📊",
-}
-
 CHAPTER_CLASSIFICATION = {
-    "transport": {"emoji": "🚗", "name": "Транспорт"},
-    "numbers": {"emoji": "🎱", "name": "Номера"},
-    "homes": {"emoji": "🏠", "name": "Дома"},
-    "business": {"emoji": "🏦", "name": "Бизнесы"},
-    "clothes": {"emoji": "🥋", "name": "Одежда"},
-    "weapon": {"emoji": "🔫", "name": "Оружие"},
-    "loot": {"emoji": "📦", "name": "Лут-предметы"},
-    "services": {"emoji": "💵", "name": "Услуги"},
-    "global": {"emoji": "📊", "name": "Торговая общий"},
+    "transport": {
+        "emoji": "🚗",
+        "name": "Транспорт",
+        "channel_id": "750716702224023573",
+        "pointer_column_name": "transport_pointer",
+        "pointer_model": UserPointers.transport_pointer,
+    },
+    "numbers": {
+        "emoji": "🎱",
+        "name": "Номера",
+        "channel_id": "750716755336233061",
+        "pointer_column_name": "numbers_pointer",
+        "pointer_model": UserPointers.numbers_pointer,
+    },
+    "homes": {
+        "emoji": "🏠",
+        "name": "Дома",
+        "channel_id": "750716815080161440",
+        "pointer_column_name": "homes_pointer",
+        "pointer_model": UserPointers.homes_pointer,
+    },
+    "business": {
+        "emoji": "🏦",
+        "name": "Бизнесы",
+        "channel_id": "750716866837741608",
+        "pointer_column_name": "business_pointer",
+        "pointer_model": UserPointers.business_pointer,
+    },
+    "clothes": {
+        "emoji": "🥋",
+        "name": "Одежда",
+        "channel_id": "774748875315347477",
+        "pointer_column_name": "clothes_pointer",
+        "pointer_model": UserPointers.clothes_pointer,
+    },
+    "weapon": {
+        "emoji": "🔫",
+        "name": "Оружие",
+        "channel_id": "774749257177628682",
+        "pointer_column_name": "weapon_pointer",
+        "pointer_model": UserPointers.weapon_pointer,
+    },
+    "loot": {
+        "emoji": "📦",
+        "name": "Лут-предметы",
+        "channel_id": "1059930592743018597",
+        "pointer_column_name": "loot_pointer",
+        "pointer_model": UserPointers.loot_pointer,
+    },
+    "services": {
+        "emoji": "💵",
+        "name": "Услуги",
+        "channel_id": "1109229581354934412",
+        "pointer_column_name": "services_pointer",
+        "pointer_model": UserPointers.services_pointer,
+    },
+    "global": {
+        "emoji": "📊",
+        "name": "Торговая общий",
+        "channel_id": "750715538686083103",
+        "pointer_column_name": "global_pointer",
+        "pointer_model": UserPointers.global_pointer,
+    },
 }
 
 
@@ -120,31 +162,3 @@ def generate_car_info_text(car_model: Cars) -> str:
         + f" - {batch_price_generator(car_model.price * 0.01)} руб.\n"
     )
     return caption
-
-
-def get_text_for_fishing(depth_tag: str) -> str:
-    with open(f"src/fishing/{depth_tag}.txt", "r", encoding="utf-8") as file:
-        content = file.read()
-        return content
-    
-
-def pointer_by_chapter_name(pointers_model: UserPointers, chapter_name: str) -> str:
-    match chapter_name:
-        case "transport":
-            return BOOL_TO_STATUS_ADDS[pointers_model.transport_pointer]
-        case "numbers":
-            return BOOL_TO_STATUS_ADDS[pointers_model.numbers_pointer]
-        case "homes":
-            return BOOL_TO_STATUS_ADDS[pointers_model.homes_pointer]
-        case "business":
-            return BOOL_TO_STATUS_ADDS[pointers_model.business_pointer]
-        case "clothes":
-            return BOOL_TO_STATUS_ADDS[pointers_model.clothes_pointer]
-        case "weapon":
-            return BOOL_TO_STATUS_ADDS[pointers_model.weapon_pointer]
-        case "loot":
-            return BOOL_TO_STATUS_ADDS[pointers_model.loot_pointer]
-        case "services":
-            return BOOL_TO_STATUS_ADDS[pointers_model.services_pointer]
-        case "global":
-            return BOOL_TO_STATUS_ADDS[pointers_model.global_pointer]

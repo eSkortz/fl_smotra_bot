@@ -31,9 +31,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.transport_pointer]}"
             ),
             callback_data="discord_my_add|transport",
-        )
-    )
-    builder.row(
+        ),
         types.InlineKeyboardButton(
             text=(
                 f"{CHAPTER_CLASSIFICATION['numbers']['emoji']} "
@@ -41,7 +39,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.numbers_pointer]}"
             ),
             callback_data="discord_my_add|numbers",
-        )
+        ),
     )
     builder.row(
         types.InlineKeyboardButton(
@@ -51,9 +49,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.homes_pointer]}"
             ),
             callback_data="discord_my_add|homes",
-        )
-    )
-    builder.row(
+        ),
         types.InlineKeyboardButton(
             text=(
                 f"{CHAPTER_CLASSIFICATION['business']['emoji']} "
@@ -61,7 +57,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.business_pointer]}"
             ),
             callback_data="discord_my_add|business",
-        )
+        ),
     )
     builder.row(
         types.InlineKeyboardButton(
@@ -71,9 +67,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.clothes_pointer]}"
             ),
             callback_data="discord_my_add|clothes",
-        )
-    )
-    builder.row(
+        ),
         types.InlineKeyboardButton(
             text=(
                 f"{CHAPTER_CLASSIFICATION['weapon']['emoji']} "
@@ -81,7 +75,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.weapon_pointer]}"
             ),
             callback_data="discord_my_add|weapon",
-        )
+        ),
     )
     builder.row(
         types.InlineKeyboardButton(
@@ -91,9 +85,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.loot_pointer]}"
             ),
             callback_data="discord_my_add|loot",
-        )
-    )
-    builder.row(
+        ),
         types.InlineKeyboardButton(
             text=(
                 f"{CHAPTER_CLASSIFICATION['services']['emoji']} "
@@ -101,7 +93,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.services_pointer]}"
             ),
             callback_data="discord_my_add|services",
-        )
+        ),
     )
     builder.row(
         types.InlineKeyboardButton(
@@ -111,12 +103,13 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
                 + f"| {BOOL_TO_STATUS_ADDS[user_pointers.global_pointer]}"
             ),
             callback_data="discord_my_add|global",
-        )
+        ),
+        types.InlineKeyboardButton(text="♻️ Обновить статусы", callback_data="my_adds"),
     )
 
     builder.row(
         types.InlineKeyboardButton(
-            text="🔙 В раздел Discord", callback_data="discord_main"
+            text="🔙 Назад к 🛒 Discord", callback_data="discord_main"
         )
     )
     return builder.as_markup(resize_keyboard=True)

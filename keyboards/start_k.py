@@ -6,16 +6,11 @@ from aiogram import types
 def get() -> ReplyKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        types.InlineKeyboardButton(text="🚗 Автомобили", callback_data=f"cars_main")
-    )
-    builder.row(
+        types.InlineKeyboardButton(text="🚗 Автомобили", callback_data=f"cars_main"),
         types.InlineKeyboardButton(text="🐟 Рыбалка", callback_data=f"fishing_main"),
-        types.InlineKeyboardButton(text="📦 Лут-предметы", callback_data=f"loot_main"),
     )
     builder.row(
-        types.InlineKeyboardButton(
-            text="🛒 Торговая площадка Discord", callback_data=f"discord_main"
-        )
+        types.InlineKeyboardButton(text="🛒 Discord", callback_data=f"discord_main")
     )
     builder.row(
         types.InlineKeyboardButton(text="🏠 Аренда ГМ", callback_data=f"rent_main")

@@ -1,12 +1,11 @@
-from aiogram import Router, F, Bot
+from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.state import StatesGroup, State
-from keyboards import start_k, only_to_main_k
+from keyboards import only_to_main_k
 from handlers.commands_h import start_command
-from config import BOT_TOKEN
+
 
 router = Router()
-bot = Bot(token=BOT_TOKEN)
 
 
 class Patterns(StatesGroup):

@@ -3,6 +3,7 @@ from aiogram.types import CallbackQuery
 from handlers.main_h import sth_error
 from handlers.commands_h import fishing_command
 
+
 router = Router()
 
 

@@ -1,22 +1,14 @@
 from aiogram.types import Message
 
-import datetime
+import io
+import base64
+from PIL import Image
 
 from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import (
-    Users,
-    UserPointers,
-    TransportAdds,
-    NumbersAdds,
-    HomesAdds,
-    BusinessAdds,
-    LootAdds,
-    WeaponAdds,
-    ClothesAdds,
-    ServicesAdds,
-    GlobalAdds,
-)
+from db.orm.schema_public import Users, UserPointers, DiscordAdds
 from config import engine_async
+
+from utils.text_utils import CHAPTER_CLASSIFICATION
 
 
 db_worker = DBWorkerAsync(engine_async)
@@ -31,10 +23,6 @@ async def auto_registration(message: Message) -> None:
         data_user = {
             "telegram_id": message.chat.id,
             "telegram_name": message.chat.username,
-            "discord_token": "",
-            "is_have_premium": False,
-            "created_at": datetime.datetime.utcnow(),
-            "updated_at": datetime.datetime.utcnow(),
         }
         await db_worker.custom_insert(cls_to=Users, data=[data_user])
 
@@ -45,32 +33,31 @@ async def auto_registration(message: Message) -> None:
 
         data_pointers = {
             "user_id": user_in_db.id,
-            "transport_pointer": False,
-            "numbers_pointer": False,
-            "homes_pointer": False,
-            "business_pointer": False,
-            "clothes_pointer": False,
-            "weapon_pointer": False,
-            "loot_pointer": False,
-            "services_pointer": False,
-            "global_pointer": False,
         }
         await db_worker.custom_insert(cls_to=UserPointers, data=[data_pointers])
 
-        adds_data = {
-            "user_id": user_in_db.id,
-            "text": "",
-            "images": [],
-            "timer": 120,
-            "created_at": datetime.datetime.utcnow(),
-            "last_sent": datetime.datetime.utcnow(),
-        }
-        await db_worker.custom_insert(cls_to=TransportAdds, data=[adds_data])
-        await db_worker.custom_insert(cls_to=NumbersAdds, data=[adds_data])
-        await db_worker.custom_insert(cls_to=HomesAdds, data=[adds_data])
-        await db_worker.custom_insert(cls_to=BusinessAdds, data=[adds_data])
-        await db_worker.custom_insert(cls_to=ClothesAdds, data=[adds_data])
-        await db_worker.custom_insert(cls_to=WeaponAdds, data=[adds_data])
-        await db_worker.custom_insert(cls_to=LootAdds, data=[adds_data])
-        await db_worker.custom_insert(cls_to=ServicesAdds, data=[adds_data])
-        await db_worker.custom_insert(cls_to=GlobalAdds, data=[adds_data])
+        chapter_names = [key for key in CHAPTER_CLASSIFICATION.keys()]
+
+        adds_data = [
+            {
+                "user_id": user_in_db.id,
+                "chapter": chapter_name,
+            }
+            for chapter_name in chapter_names
+        ]
+        await db_worker.custom_insert(cls_to=DiscordAdds, data=adds_data)
+
+
+def combine_images(images_list: list) -> io.BytesIO:
+    images = [Image.open(io.BytesIO(base64.b64decode(img))) for img in images_list]
+    combined_image = Image.new(
+        "RGB", (sum(img.width for img in images), max(img.height for img in images))
+    )
+    offset = 0
+    for img in images:
+        combined_image.paste(img, (offset, 0))
+        offset += img.width
+    photo_stream = io.BytesIO()
+    combined_image.save(photo_stream, format="PNG")
+    photo_stream.seek(0)
+    return photo_stream

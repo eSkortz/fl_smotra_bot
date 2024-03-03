@@ -7,9 +7,9 @@ from keyboards.fishing import fishing_main_k
 from keyboards.discord import discord_main_k
 from keyboards.cars import cars_main_k
 from keyboards.rent import rent_main_k
-from keyboards.loot import loot_main_k
 
 from utils.func_utils import auto_registration
+
 
 router = Router()
 
@@ -126,22 +126,6 @@ async def rent_command(message: Message) -> None:
             + "выставить свои гм для аренды и оставить ссылку для связи с вами. При выставлении "
             + "гм в аренду просьба указывать в описании стоимость комиссии и аренды, "
             + "чтобы арендатор понимал в какую цену ему выйдет аренда гаражных мест."
-        ),
-        reply_markup=markup_inline,
-    )
-
-
-@router.message(Command("loot"))
-async def loot_command(message: Message) -> None:
-    await auto_registration(message)
-    markup_inline = loot_main_k.get()
-    photo = FSInputFile("src/loot.png")
-    await message.answer_photo(
-        photo=photo,
-        caption=(
-            "📦 Это раздел лут-предметов, здесь вы можете посмотреть какие "
-            + "компоненты падают с каких кейсов, а также посмотреть все крафты "
-            + "и что нужно чтобы скрафтить определенный предмет."
         ),
         reply_markup=markup_inline,
     )

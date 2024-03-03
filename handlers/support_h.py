@@ -1,11 +1,10 @@
-from aiogram import Router, F, Bot
+from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from handlers.main_h import sth_error
 from handlers.commands_h import support_command
-from config import BOT_TOKEN
+
 
 router = Router()
-bot = Bot(token=BOT_TOKEN)
 
 
 @router.callback_query(F.data == "support_main")
