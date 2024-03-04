@@ -1,4 +1,5 @@
 import aiohttp
+from config import DISCORD_CAPTION
 
 
 async def post_with_images(
@@ -14,7 +15,7 @@ async def post_with_images(
             response = await response.json()
             message_id = response["id"]
         body = {
-            "content": f"{text}\n\n*Sent by Smotra Assistant* <:pUwu:760501989532237844>"
+            "content": f"{text}\n\n{DISCORD_CAPTION}"
         }
         async with session.patch(
             url=f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}",
@@ -29,7 +30,7 @@ async def post_without_images(authorization: str, text: str, channel_id: str) ->
     async with aiohttp.ClientSession() as session:
         headers = {"authorization": authorization}
         body = {
-            "content": f"{text}\n\n*Sent by Smotra Assistant* <:pUwu:760501989532237844>"
+            "content": f"{text}\n\n{DISCORD_CAPTION}"
         }
         async with session.post(
             url=f"https://discord.com/api/v9/channels/{channel_id}/messages",

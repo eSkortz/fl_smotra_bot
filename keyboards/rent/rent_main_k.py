@@ -9,7 +9,7 @@ def get() -> ReplyKeyboardMarkup:
         types.InlineKeyboardButton(
             text="🔍 Найти ГМ в аренду", callback_data="find_rent"
         ),
-        types.InlineKeyboardButton(text="🏘 Мои ГМ", callback_data="my_rent"),
+        types.InlineKeyboardButton(text="🏘 Мои объявления (ГМ)", callback_data="my_rents"),
     )
     builder.row(
         types.InlineKeyboardButton(text="🔙 В главное меню", callback_data="main_menu")

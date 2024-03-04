@@ -13,6 +13,8 @@ DB_PASSWORD = app_config.DB_PASSWORD.get_secret_value()
 DB_IP = app_config.DB_IP.get_secret_value()
 DB_NAME = app_config.DB_NAME.get_secret_value()
 
+DISCORD_CAPTION = app_config.DISCORD_CAPTION
+
 
 def batch_lengh_generator(step: int, data: list) -> list:
     return (data[x : x + step] for x in range(0, len(data), step))
@@ -40,7 +42,9 @@ def retry_async(num_attempts):
                     await asyncio.sleep(1)
             else:
                 print(f"Failed after {num_attempts} attempts.")
+
         return wrapper
+
     return decorator
 
 
@@ -54,6 +58,7 @@ def do_retry_on_fail_async(func):
             except:
                 print(f"Unable to execute: {func.__name__}")
                 await asyncio.sleep(1)
+
     return wrapper
 
 
@@ -67,6 +72,7 @@ def do_retry_on_fail(func):
             except:
                 print(f"Unable to execute: {func.__name__}")
                 time.sleep(1)
+
     return wrapper
 
 

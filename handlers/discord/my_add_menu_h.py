@@ -43,15 +43,21 @@ async def my_add_menu(callback: CallbackQuery, chapter_name: str = None) -> None
         )
         add_in_db: DiscordAdds = add_in_db[0]
 
-        markup_inline = my_add_menu_k.get(chapter_name)
-        photo_note = "(то, что вы видите, - это склейка для удобства просмотра, такой костыль связан с api телеграма, в дискорд отправятся все фотографии в полноценном виде)"
+        markup_inline = my_add_menu_k.get(
+            chapter=chapter_name, images_number=len(add_in_db.images)
+        )
+        photo_note = (
+            "(то, что вы видите, - это склейка для удобства просмотра, "
+            + "такой костыль связан с api телеграма, в дискорд отправятся "
+            + "все фотографии в полноценном виде)"
+        )
         text = (
             f"Мое объявление в разделе {CHAPTER_CLASSIFICATION[chapter_name]['emoji']} "
             + f"{CHAPTER_CLASSIFICATION[chapter_name]['name']}\n\n"
             + f"💡 Статус: {BOOL_TO_STATUS_ADDS[pointer_value]}\n"
             + f"⏰ Таймер: {add_in_db.timer} минут\n"
             + f"📅 Последняя отправка: {add_in_db.last_sent.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-            + f"🎑 Кол-во фотографий: {len(add_in_db.images)} {photo_note if len(add_in_db.images) != 0 else None}\n\n"
+            + f"🎑 Кол-во фотографий: {len(add_in_db.images)} {photo_note if len(add_in_db.images) != 0 else ''}\n\n"
             + f"📝 Текущий текст:\n```\n{add_in_db.text}```"
         )
         await callback.message.delete()

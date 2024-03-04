@@ -3,6 +3,7 @@ from sqlalchemy import MetaData, Sequence, UniqueConstraint
 from datetime import datetime, timedelta
 from db.orm.annotations import (
     IntegerPrimaryKey,
+    BigintPrimaryKey,
     TextColumn,
     BoolColumn,
     BigintColumn,
@@ -69,6 +70,15 @@ class DiscordAdds(Base):
     last_sent: Mapped[TimestampWTColumn] = mapped_column(
         nullable=False, default=datetime.utcnow() - timedelta(days=1)
     )
+
+
+class SentDiscordAdds(Base):
+    __tablename__ = "sent_discord_adds"
+    id: Mapped[BigintPrimaryKey] = mapped_column(Sequence("sent_discord_adds_id_seq"))
+    user_id: Mapped[IntegerColumn] = mapped_column(nullable=False)
+    message_id: Mapped[TextColumn] = mapped_column(nullable=False)
+    sent_datetime: Mapped[TimestampWTColumn] = mapped_column(nullable=False, default=datetime.utcnow())
+    is_deleted: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
 
 
 class RentAdds(Base):

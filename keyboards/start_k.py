@@ -21,7 +21,7 @@ def get() -> ReplyKeyboardMarkup:
     )
     builder.row(
         types.InlineKeyboardButton(
-            text="💬 Smotra Assistant chat",
+            text="💬 SmotraAssistant chat",
             url="https://t.me/smotra_assistant",
         )
     )
