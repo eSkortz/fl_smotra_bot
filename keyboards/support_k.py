@@ -8,7 +8,7 @@ def get() -> ReplyKeyboardMarkup:
     builder.row(
         types.InlineKeyboardButton(text="🔙 В главное меню", callback_data="main_menu"),
         types.InlineKeyboardButton(
-            text="📝 SA chat", url="https://t.me/smotra_assistant"
+            text="💬 SA chat", url="https://t.me/smotra_assistant"
         ),
     )
     return builder.as_markup(resize_keyboard=True)

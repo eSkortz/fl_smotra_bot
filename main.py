@@ -4,7 +4,14 @@ from aiogram import Bot, Dispatcher
 from config import BOT_TOKEN
 from handlers import commands_h, main_h, premium_h, support_h
 from handlers.cars import cars_main_h, car_marks_h, car_info_h
-from handlers.discord import discord_h, my_adds_h, my_add_menu_h, adds_function_h
+from handlers.discord import (
+    discord_h,
+    my_adds_h,
+    my_add_menu_h,
+    adds_function_h,
+    change_authorization_h,
+    notifications_h
+)
 from handlers.fishing import fishing_h, fishing_info_h
 from handlers.rent import rent_h
 
@@ -30,7 +37,9 @@ async def main() -> None:
         car_info_h.router,
         fishing_info_h.router,
         my_add_menu_h.router,
-        adds_function_h.router
+        adds_function_h.router,
+        change_authorization_h.router,
+        notifications_h.router
     )
     await bot.delete_webhook(drop_pending_updates=True)
     await asyncio.create_task(dp.start_polling(bot))

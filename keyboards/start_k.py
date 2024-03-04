@@ -10,13 +10,13 @@ def get() -> ReplyKeyboardMarkup:
         types.InlineKeyboardButton(text="🐟 Рыбалка", callback_data=f"fishing_main"),
     )
     builder.row(
-        types.InlineKeyboardButton(text="🛒 Discord", callback_data=f"discord_main")
+        types.InlineKeyboardButton(text="🌐 Discord", callback_data=f"discord_main"),
     )
     builder.row(
         types.InlineKeyboardButton(text="🏠 Аренда ГМ", callback_data=f"rent_main")
     )
     builder.row(
-        types.InlineKeyboardButton(text="📣 Поддержка", callback_data=f"support_main"),
+        types.InlineKeyboardButton(text="💭 Поддержка", callback_data=f"support_main"),
         types.InlineKeyboardButton(text="💎 Премиум", callback_data=f"premium_main"),
     )
     builder.row(

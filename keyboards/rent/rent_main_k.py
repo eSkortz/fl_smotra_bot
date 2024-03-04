@@ -7,9 +7,9 @@ def get() -> ReplyKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
-            text="🔍 Найти гм в аренду", callback_data="find_rent"
+            text="🔍 Найти ГМ в аренду", callback_data="find_rent"
         ),
-        types.InlineKeyboardButton(text="🏘 Мои гм", callback_data="my_rent"),
+        types.InlineKeyboardButton(text="🏘 Мои ГМ", callback_data="my_rent"),
     )
     builder.row(
         types.InlineKeyboardButton(text="🔙 В главное меню", callback_data="main_menu")

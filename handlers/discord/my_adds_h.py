@@ -13,7 +13,7 @@ async def my_adds(callback: CallbackQuery) -> None:
         await callback.message.delete()
         markup_inline = await my_adds_k.get(callback.message)
         await callback.message.answer(
-            text='📝 Мои объявления в smotra (раздел|статус)',
+            text='📢 Мои объявления (раздел|статус)',
             reply_markup=markup_inline
         )
     except Exception as exception:

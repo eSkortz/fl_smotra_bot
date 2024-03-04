@@ -109,7 +109,7 @@ async def get(message: Message) -> ReplyKeyboardMarkup:
 
     builder.row(
         types.InlineKeyboardButton(
-            text="🔙 Назад к 🛒 Discord", callback_data="discord_main"
+            text="🔙 Назад к 🌐 Discord", callback_data="discord_main"
         )
     )
     return builder.as_markup(resize_keyboard=True)

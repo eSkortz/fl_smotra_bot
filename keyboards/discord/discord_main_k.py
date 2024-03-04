@@ -12,7 +12,7 @@ def get() -> ReplyKeyboardMarkup:
     )
     builder.row(
         types.InlineKeyboardButton(
-            text="🔔 Мои теги для уведомлений", callback_data="my_notify"
+            text="🔔 Мои уведомления", callback_data="notifications"
         )
     )
     builder.row(
