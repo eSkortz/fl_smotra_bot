@@ -7,10 +7,16 @@ async def post_with_images(
 ) -> dict:
     async with aiohttp.ClientSession() as session:
         headers = {"authorization": authorization}
+
+        images = [['file.jpg', image] for image in images]
+        form_data = aiohttp.FormData()
+        for file_name, file_content in images:
+            form_data.add_field('files', file_content, filename=file_name, content_type='application/octet-stream')
+
         async with session.post(
             url=f"https://discord.com/api/v9/channels/{channel_id}/messages",
             headers=headers,
-            files=images,
+            data=images,
         ) as response:
             response = await response.json()
             message_id = response["id"]

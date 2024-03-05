@@ -64,24 +64,27 @@ async def send_by_chapter(
             await db_worker.custom_insert(cls_to=SentDiscordAdds, data=[data_to_insert])
 
 
-async def processing_chapter(pointer_model) -> None:
+async def processing_chapter(chapter_name: str, pointer_model) -> None:
     data_by_pointer_in_db = await db_worker.custom_orm_select(
         cls_from=[UserPointers.user_id, pointer_model]
     )
     tasks_to_send = [
         asyncio.create_task(
             send_by_chapter(
-                user_id=db_row[0], chapter_name=db_row[1], semaphore=semaphore
+                user_id=db_row[0], chapter_name=chapter_name, semaphore=semaphore
             )
         )
         for db_row in data_by_pointer_in_db
+        if db_row[1]
     ]
     await asyncio.gather(*tasks_to_send)
 
 
 async def auto_sender_discord_function() -> None:
     tasks = [
-        asyncio.create_task(processing_chapter(pointer_model=values["pointer_model"]))
-        for values in CHAPTER_CLASSIFICATION.values()
+        asyncio.create_task(
+            processing_chapter(chapter_name=key, pointer_model=values["pointer_model"])
+        )
+        for key, values in CHAPTER_CLASSIFICATION.items()
     ]
     await asyncio.gather(*tasks)
