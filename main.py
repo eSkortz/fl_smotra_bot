@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher
 
 import asyncio
 import logging
-from aiocron import crontab
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from config import BOT_TOKEN
 
@@ -33,14 +33,11 @@ logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
-
-
-@crontab("* * * * *")
-async def auto_sender_discord_cron():
-    await auto_sender_discord_function()
+scheduler = AsyncIOScheduler()
 
 
 async def main() -> None:
+    scheduler.add_job(auto_sender_discord_function, trigger='interval', seconds=60)
     dp.include_routers(
         commands_h.router,
         main_h.router,
@@ -64,7 +61,9 @@ async def main() -> None:
         find_rent_h.router,
     )
     await bot.delete_webhook(drop_pending_updates=True)
-    await asyncio.create_task(dp.start_polling(bot))
+
+    scheduler.start()
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
