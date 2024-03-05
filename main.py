@@ -37,7 +37,7 @@ scheduler = AsyncIOScheduler()
 
 
 async def main() -> None:
-    scheduler.add_job(auto_sender_discord_function, trigger='interval', seconds=5)
+    scheduler.add_job(auto_sender_discord_function, trigger='interval', seconds=60)
     dp.include_routers(
         commands_h.router,
         main_h.router,

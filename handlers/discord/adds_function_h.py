@@ -155,7 +155,7 @@ async def add_change_text(callback: CallbackQuery, state: FSMContext) -> None:
         discord_add: DiscordAdds = discord_add_in_db[0]
 
         sent_message = await callback.message.answer(
-            text=f"📝 Введите новый текст объявления.\n\nТекущий текст:\n\n```\n{discord_add.text}```",
+            text=f"📝 Введите новый текст объявления.\n\nТекущий текст:\n\n```\n{discord_add.text[:100]}```",
             parse_mode=ParseMode.MARKDOWN
         )
 

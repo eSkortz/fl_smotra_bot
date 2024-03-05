@@ -8,7 +8,7 @@ async def post_with_images(
     async with aiohttp.ClientSession() as session:
         headers = {"authorization": authorization}
 
-        images = [[f'file{index}.jpg', images[index]] for index in len(images)]
+        images = [[f'file{index}.jpg', images[index]] for index in range(len(images))]
         form_data = aiohttp.FormData()
         for file_name, file_content in images:
             form_data.add_field('files', file_content, filename=file_name, content_type='application/octet-stream')
