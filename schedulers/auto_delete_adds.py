@@ -9,7 +9,7 @@ from utils.discord_utils import delete_message
 
 
 db_worker = DBWorkerAsync(engine_async)
-local_semaphore = asyncio.Semaphore(5)
+local_semaphore = asyncio.Semaphore(20)
 target_date = datetime.utcnow() - timedelta(days=DAYS_FOR_DELETE)
 
 

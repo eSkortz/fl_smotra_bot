@@ -8,7 +8,7 @@ from utils.discord_utils import put_reaction
 
 
 db_worker = DBWorkerAsync(engine_async)
-local_semaphore = asyncio.Semaphore(5)
+local_semaphore = asyncio.Semaphore(20)
 
 
 async def processing_symbol(

@@ -72,5 +72,4 @@ async def put_reaction(
             url=f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}/reactions/{reaction}",
             headers=headers,
         ) as response:
-            response = await response.json()
-            return response
+            return response.status

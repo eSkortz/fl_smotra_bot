@@ -12,7 +12,7 @@ from utils.text_utils import CHAPTER_CLASSIFICATION
 
 
 db_worker = DBWorkerAsync(engine_async)
-local_semaphore = asyncio.Semaphore(5)
+local_semaphore = asyncio.Semaphore(20)
 
 
 async def send_by_chapter(
