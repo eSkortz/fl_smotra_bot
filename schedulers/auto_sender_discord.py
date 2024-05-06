@@ -12,7 +12,7 @@ from utils.text_utils import CHAPTER_CLASSIFICATION
 
 
 db_worker = DBWorkerAsync(engine_async)
-semaphore = asyncio.Semaphore(5)
+local_semaphore = asyncio.Semaphore(5)
 
 
 async def send_by_chapter(
@@ -60,7 +60,11 @@ async def send_by_chapter(
                 cls_to=DiscordAdds, data=[data_to_update]
             )
 
-            data_to_insert = {"user_id": user.id, "message_id": response["id"]}
+            data_to_insert = {
+                "user_id": user.id,
+                "message_id": response["id"],
+                "channel_id": CHAPTER_CLASSIFICATION[chapter_name]["channel_id"],
+            }
             await db_worker.custom_insert(cls_to=SentDiscordAdds, data=[data_to_insert])
 
 
@@ -71,7 +75,7 @@ async def processing_chapter(chapter_name: str, pointer_model) -> None:
     tasks_to_send = [
         asyncio.create_task(
             send_by_chapter(
-                user_id=db_row[0], chapter_name=chapter_name, semaphore=semaphore
+                user_id=db_row[0], chapter_name=chapter_name, semaphore=local_semaphore
             )
         )
         for db_row in data_by_pointer_in_db
