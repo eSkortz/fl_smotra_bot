@@ -50,13 +50,34 @@ async def auto_registration(message: Message) -> None:
 
 def combine_images(images_list: list) -> io.BytesIO:
     images = [Image.open(io.BytesIO(base64.b64decode(img))) for img in images_list]
-    combined_image = Image.new(
-        "RGB", (sum(img.width for img in images), max(img.height for img in images))
+
+    max_height = max(img.height for img in images)
+
+    num_images = len(images)
+    num_rows = (num_images + 4) // 5
+    target_width = (
+        max(
+            sum(img.width for img in images[:5]), sum(img.width for img in images[5:-1])
+        )
+        if num_images > 5
+        else sum(img.width for img in images)
     )
-    offset = 0
-    for img in images:
-        combined_image.paste(img, (offset, 0))
-        offset += img.width
+    target_height = max_height * num_rows
+
+    combined_image = Image.new("RGB", (target_width, target_height))
+
+    offset_x = 0
+    offset_y = 0
+    row_count = 0
+    for i, img in enumerate(images):
+        combined_image.paste(img, (offset_x, offset_y))
+        offset_x += img.width
+        row_count += 1
+        if row_count == 5:
+            offset_x = 0
+            offset_y += max_height
+            row_count = 0
+
     photo_stream = io.BytesIO()
     combined_image.save(photo_stream, format="PNG")
     photo_stream.seek(0)
