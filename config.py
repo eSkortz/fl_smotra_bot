@@ -14,10 +14,11 @@ DB_IP = app_config.DB_IP.get_secret_value()
 DB_NAME = app_config.DB_NAME.get_secret_value()
 
 DISCORD_CAPTION = ''
-REACTIONS_LIST = ["%F0%9F%87%B8/%40me", "%F0%9F%87%A6/%40me"]
+REACTIONS_LIST = ["pUwu%3A760501989532237844/%40me"]
+
 SYMBOLS_BLACKLIST = ["#", "`", ">"]
 DAYS_FOR_DELETE = 7
-NON_PREMIUM_TIMER = 240
+NON_PREMIUM_TIMER = 180
 PREMIUM_TIMER = 60
 
 

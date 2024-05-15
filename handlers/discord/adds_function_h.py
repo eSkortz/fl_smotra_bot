@@ -114,10 +114,10 @@ async def add_processing_timer(message: Message, state: FSMContext) -> None:
         )
         add_in_db: DiscordAdds = add_in_db[0]
 
-        if new_timer < NON_PREMIUM_TIMER:
-            new_timer = NON_PREMIUM_TIMER
-        if new_timer < PREMIUM_TIMER and not is_user_have_premium:
+        if new_timer < PREMIUM_TIMER:
             new_timer = PREMIUM_TIMER
+        if new_timer < NON_PREMIUM_TIMER and not is_user_have_premium:
+            new_timer = NON_PREMIUM_TIMER
 
         data_to_update = {
             "id": add_in_db.id,
