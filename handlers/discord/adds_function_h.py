@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from datetime import datetime
 import base64
 
-from config import engine_async, BOT_TOKEN
+from config import engine_async, BOT_TOKEN, NON_PREMIUM_TIMER, PREMIUM_TIMER
 from db.oop.alchemy_di_async import DBWorkerAsync
 from db.orm.schema_public import UserPointers, Users, DiscordAdds
 
@@ -114,10 +114,10 @@ async def add_processing_timer(message: Message, state: FSMContext) -> None:
         )
         add_in_db: DiscordAdds = add_in_db[0]
 
-        if new_timer < 30:
-            new_timer = 30
-        if new_timer < 120 and not is_user_have_premium:
-            new_timer = 120
+        if new_timer < PREMIUM_TIMER:
+            new_timer = PREMIUM_TIMER
+        if new_timer < NON_PREMIUM_TIMER and not is_user_have_premium:
+            new_timer = NON_PREMIUM_TIMER
 
         data_to_update = {
             "id": add_in_db.id,
@@ -155,8 +155,8 @@ async def add_change_text(callback: CallbackQuery, state: FSMContext) -> None:
         discord_add: DiscordAdds = discord_add_in_db[0]
 
         sent_message = await callback.message.answer(
-            text=f"📝 Введите новый текст объявления.\n\nТекущий текст:\n\n```\n{discord_add.text[:100]}```",
-            parse_mode=ParseMode.MARKDOWN
+            text=f"📝 Введите новый текст объявления.\n\nТекущий текст:\n\n```\n{discord_add.text[:500]}```",
+            parse_mode=ParseMode.MARKDOWN,
         )
 
         await state.set_state(AddGroup.waiting_to_text)

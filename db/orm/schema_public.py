@@ -77,7 +77,9 @@ class SentDiscordAdds(Base):
     id: Mapped[BigintPrimaryKey] = mapped_column(Sequence("sent_discord_adds_id_seq"))
     user_id: Mapped[IntegerColumn] = mapped_column(nullable=False)
     message_id: Mapped[TextColumn] = mapped_column(nullable=False)
+    channel_id: Mapped[TextColumn] = mapped_column(nullable=False)
     sent_datetime: Mapped[TimestampWTColumn] = mapped_column(nullable=False, default=datetime.utcnow())
+    is_reaction: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
     is_deleted: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
 
 

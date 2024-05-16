@@ -7,7 +7,6 @@ class AppConfig(BaseSettings):
     DB_LOGIN: SecretStr
     DB_PASSWORD: SecretStr
     BOT_TOKEN: SecretStr
-    DISCORD_CAPTION: str
     
     class Config:
         env_file = '.env'

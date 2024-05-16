@@ -7,6 +7,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config import BOT_TOKEN
 
 from schedulers.auto_sender_discord import auto_sender_discord_function
+from schedulers.auto_reaction_adds import auto_put_reactions_function
+from schedulers.auto_delete_adds import auto_delete_discord_function
 
 
 from handlers import commands_h, main_h, premium_h, support_h
@@ -37,7 +39,9 @@ scheduler = AsyncIOScheduler()
 
 
 async def main() -> None:
-    scheduler.add_job(auto_sender_discord_function, trigger='interval', seconds=60)
+    scheduler.add_job(auto_sender_discord_function, trigger="interval", seconds=60)
+    # scheduler.add_job(auto_put_reactions_function, trigger="interval", seconds=600)
+    scheduler.add_job(auto_delete_discord_function, trigger="interval", seconds=6000)
     dp.include_routers(
         commands_h.router,
         main_h.router,

@@ -58,7 +58,7 @@ async def my_add_menu(callback: CallbackQuery, chapter_name: str = None) -> None
             + f"⏰ Таймер: {add_in_db.timer} минут\n"
             + f"📅 Последняя отправка: {add_in_db.last_sent.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
             + f"🎑 Кол-во фотографий: {len(add_in_db.images)} {photo_note if len(add_in_db.images) != 0 else ''}\n\n"
-            + f"📝 Текущий текст:\n```\n{add_in_db.text[:100]}```"
+            + f"📝 Текущий текст:\n```\n{add_in_db.text[:500]}```"
         )
         await callback.message.delete()
 
