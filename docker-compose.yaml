@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  application_telegram:
+    container_name: smotra_bot
+    build:
+      context: ./application_telegram
+      dockerfile: Dockerfile
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DB_LOGIN=${DB_LOGIN}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_IP=${DB_IP}
+      - DB_NAME=${DB_NAME}
