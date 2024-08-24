@@ -68,6 +68,20 @@ def do_retry_on_fail_async(func):
     return wrapper
 
 
+def write_redis(func):
+    async def wrapper(*args, **kwargs):
+        reconnct_tries = 5
+        for try_index in range(reconnct_tries):
+            try:
+                print(try_index, reconnct_tries)
+                return await func(*args, **kwargs)
+            except:
+                print(f"Unable to execute: {func.__name__}")
+                await asyncio.sleep(1)
+
+    return wrapper
+
+
 def do_retry_on_fail(func):
     def wrapper(*args, **kwargs):
         reconnct_tries = 5

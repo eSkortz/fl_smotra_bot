@@ -26,15 +26,16 @@ async def car_marks(callback: CallbackQuery) -> None:
             where_params=[Cars.classification == car_in_db.classification],
             order_by=[Cars.price],
         )
-        for index in range (len(all_cars_by_mark)):
+        for index in range(len(all_cars_by_mark)):
             car: Cars = all_cars_by_mark[index]
             if car.id == car_in_db.id:
                 car_index_by_price = index
                 break
         page_index = car_index_by_price // 5 * 5
 
-
-        markup_inline = car_info_k.get(car_mark=car_in_db.classification, page_index=page_index)
+        markup_inline = car_info_k.get(
+            car_mark=car_in_db.classification, page_index=page_index
+        )
         photo = FSInputFile(car_in_db.image_link)
         text = generate_car_info_text(car_model=car_in_db)
         await callback.message.delete()
