@@ -28,12 +28,8 @@ class Users(Base):
     telegram_name: Mapped[TextColumn] = mapped_column(nullable=True)
     discord_token: Mapped[TextColumn] = mapped_column(nullable=True)
     is_have_premium: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
-    created_at: Mapped[TimestampWTColumn] = mapped_column(
-        nullable=False, default=datetime.utcnow()
-    )
-    updated_at: Mapped[TimestampWTColumn] = mapped_column(
-        nullable=False, default=datetime.utcnow()
-    )
+    created_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
+    updated_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
 
 
 class UserPointers(Base):
@@ -50,9 +46,7 @@ class UserPointers(Base):
     loot_pointer: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
     services_pointer: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
     global_pointer: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
-    updated_at: Mapped[TimestampWTColumn] = mapped_column(
-        nullable=False, default=datetime.utcnow()
-    )
+    updated_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
 
 
 class DiscordAdds(Base):
@@ -64,12 +58,8 @@ class DiscordAdds(Base):
     text: Mapped[TextColumn] = mapped_column(nullable=False, default="")
     images: Mapped[ListTextColumn] = mapped_column(nullable=False, default=[])
     timer: Mapped[IntegerColumn] = mapped_column(nullable=False, default=120)
-    updated_at: Mapped[TimestampWTColumn] = mapped_column(
-        nullable=False, default=datetime.utcnow()
-    )
-    last_sent: Mapped[TimestampWTColumn] = mapped_column(
-        nullable=False, default=datetime.utcnow() - timedelta(days=1)
-    )
+    updated_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
+    last_sent: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
 
 
 class SentDiscordAdds(Base):
@@ -78,7 +68,7 @@ class SentDiscordAdds(Base):
     user_id: Mapped[IntegerColumn] = mapped_column(nullable=False)
     message_id: Mapped[TextColumn] = mapped_column(nullable=False)
     channel_id: Mapped[TextColumn] = mapped_column(nullable=False)
-    sent_datetime: Mapped[TimestampWTColumn] = mapped_column(nullable=False, default=datetime.utcnow())
+    sent_datetime: Mapped[TimestampWTColumn] = mapped_column(nullable=False)
     is_reaction: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
     is_deleted: Mapped[BoolColumn] = mapped_column(nullable=False, default=False)
 
@@ -90,12 +80,8 @@ class RentAdds(Base):
     number_of_gm: Mapped[IntegerColumn] = mapped_column(index=True, nullable=False)
     add_text: Mapped[TextColumn]
     contact_link: Mapped[TextColumn] = mapped_column(nullable=False)
-    created_at: Mapped[TimestampWTColumn] = mapped_column(
-        nullable=False, default=datetime.utcnow()
-    )
-    last_check: Mapped[TimestampWTColumn] = mapped_column(
-        nullable=False, default=datetime.utcnow()
-    )
+    created_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
+    last_check: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
 
 
 class Notifications(Base):
@@ -104,9 +90,7 @@ class Notifications(Base):
     id: Mapped[IntegerPrimaryKey] = mapped_column(Sequence("notifications_id_seq"))
     user_id: Mapped[IntegerColumn] = mapped_column(index=True, nullable=False)
     tag: Mapped[TextColumn] = mapped_column(nullable=False)
-    created_at: Mapped[TimestampWTColumn] = mapped_column(
-        nullable=False, default=datetime.utcnow()
-    )
+    created_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
 
 
 class Cars(Base):
@@ -129,3 +113,32 @@ class Fishing(Base):
     id: Mapped[IntegerPrimaryKey] = mapped_column(Sequence("fishing_id_seq"))
     depth: Mapped[IntegerColumn] = mapped_column(nullable=False)
     text: Mapped[TextColumn] = mapped_column(nullable=False)
+
+
+class Businesses(Base):
+    __tablename__ = "businesses"
+    id: Mapped[IntegerPrimaryKey] = mapped_column(Sequence("businesses_id_seq"))
+    user_id: Mapped[IntegerColumn] = mapped_column(index=True, nullable=False)
+    name: Mapped[TextColumn] = mapped_column(nullable=False)
+    profit: Mapped[IntegerColumn] = mapped_column()
+    tasks_count: Mapped[IntegerColumn] = mapped_column()
+    balance: Mapped[IntegerColumn] = mapped_column(nullable=False)
+    updated_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
+
+
+class Homes(Base):
+    __tablename__ = "homes"
+    id: Mapped[IntegerPrimaryKey] = mapped_column(Sequence("homes_id_seq"))
+    user_id: Mapped[IntegerColumn] = mapped_column(index=True, nullable=False)
+    name: Mapped[TextColumn] = mapped_column(nullable=False)
+    expenses: Mapped[IntegerColumn] = mapped_column(nullable=True)
+    balance: Mapped[IntegerColumn] = mapped_column(nullable=False)
+    updated_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
+
+
+class Gangs(Base):
+    __tablename__ = "gangs"
+    id: Mapped[IntegerPrimaryKey] = mapped_column(Sequence("gangs_id_seq"))
+    user_id: Mapped[IntegerColumn] = mapped_column(index=True, nullable=False)
+    capt_chat_id: Mapped[TextColumn] = mapped_column(nullable=True)
+    updated_at: Mapped[TimestampWTColumn] = mapped_column(nullable=True)

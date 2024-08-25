@@ -12,6 +12,7 @@ from db.orm.schema_public import Users
 
 from handlers.main_h import sth_error
 from handlers.discord.discord_h import discord_main
+from handlers.fractions.gang_h import gang_menu
 
 
 router = Router()
@@ -26,6 +27,7 @@ class TokenGroup(StatesGroup):
 @router.callback_query(F.data.startswith("change_authorization"))
 async def change_authorization(callback: CallbackQuery, state: FSMContext) -> None:
     try:
+        scenario = callback.data.split("|")[1]
         user_in_db = await db_worker.custom_orm_select(
             cls_from=Users,
             where_params=[Users.telegram_id == callback.message.chat.id],
@@ -43,6 +45,7 @@ async def change_authorization(callback: CallbackQuery, state: FSMContext) -> No
         await state.update_data(callback=callback)
         await state.update_data(id_to_delete=sent_message.message_id)
         await state.update_data(user_id=user_id)
+        await state.update_data(scenario=scenario)
 
     except Exception as exception:
         await sth_error(callback.message, exception)
@@ -56,6 +59,7 @@ async def processing_authorization(message: Message, state: FSMContext) -> None:
         id_to_delete = state_data["id_to_delete"]
         user_id = state_data["user_id"]
         callback = state_data["callback"]
+        scenario = state_data["scenario"]
 
         await bot.delete_message(chat_id=message.chat.id, message_id=id_to_delete)
         await message.delete()
@@ -67,7 +71,10 @@ async def processing_authorization(message: Message, state: FSMContext) -> None:
         }
         await db_worker.custom_orm_bulk_update(cls_to=Users, data=[data_to_update])
 
-        await discord_main(callback=callback)
+        if scenario == "gang":
+            await gang_menu(callback=callback)
+        else:
+            await discord_main(callback=callback)
 
     except Exception as exception:
         await sth_error(message, exception)

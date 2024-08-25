@@ -31,8 +31,7 @@ async def post_with_images(
             headers=headers,
             json=body,
         ) as response:
-            response = await response.json()
-            return response
+            return await response.json()
 
 
 async def post_without_images(authorization: str, text: str, channel_id: str) -> dict:
@@ -44,8 +43,7 @@ async def post_without_images(authorization: str, text: str, channel_id: str) ->
             headers=headers,
             json=body,
         ) as response:
-            response = await response.json()
-            return response
+            return await response.json()
 
 
 async def delete_message(authorization: str, channel_id: str, message_id: str) -> dict:
@@ -55,12 +53,17 @@ async def delete_message(authorization: str, channel_id: str, message_id: str) -
             url=f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}",
             headers=headers,
         ) as response:
-            response = await response.json()
-            return response
+            return await response.json()
 
 
-async def get_messages(authorization: str, channel_id: str, message_id: str) -> dict:
-    pass
+async def get_messages(authorization: str, channel_id: str, before: str = None) -> dict:
+    async with aiohttp.ClientSession() as session:
+        headers = {"Authorization": authorization}
+        url = f"https://discord.com/api/v9/channels/{channel_id}/messages?limit=100"
+        if before:
+            url = url + f"&before={before}"
+        async with session.get(url=url, headers=headers) as response:
+            return await response.json()
 
 
 async def put_reaction(

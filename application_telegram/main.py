@@ -29,6 +29,8 @@ from handlers.rent import (
     my_rent_info_h,
     find_rent_h,
 )
+from handlers.fractions import fractions_h, family_h, gang_h
+from handlers.property import property_h
 
 
 logging.basicConfig(level=logging.INFO)
@@ -39,7 +41,7 @@ scheduler = AsyncIOScheduler()
 
 
 async def main() -> None:
-    scheduler.add_job(auto_sender_discord_function, trigger="interval", seconds=60)
+    # scheduler.add_job(auto_sender_discord_function, trigger="interval", seconds=60)
     # scheduler.add_job(auto_put_reactions_function, trigger="interval", seconds=600)
     # scheduler.add_job(auto_delete_discord_function, trigger="interval", seconds=6000)
     dp.include_routers(
@@ -63,6 +65,10 @@ async def main() -> None:
         rent_add_functions_h.router,
         my_rent_info_h.router,
         find_rent_h.router,
+        property_h.router,
+        fractions_h.router,
+        family_h.router,
+        gang_h.router,
     )
     await bot.delete_webhook(drop_pending_updates=True)
 

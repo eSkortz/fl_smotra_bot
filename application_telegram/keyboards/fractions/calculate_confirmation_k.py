@@ -6,6 +6,11 @@ from aiogram import types
 def get() -> ReplyKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        types.InlineKeyboardButton(text="🔙 В главное меню", callback_data="main_menu"),
+        types.InlineKeyboardButton(
+            text=f"🔙 Назад к 🥷 Банда", callback_data=f"gang_menu"
+        ),
+        types.InlineKeyboardButton(
+            text="✅ Продолжить", callback_data=f"calculate_process"
+        ),
     )
     return builder.as_markup(resize_keyboard=True)

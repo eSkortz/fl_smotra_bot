@@ -7,25 +7,22 @@ def get() -> ReplyKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
-            text="📢 Мои объявления в Discord", callback_data="my_adds"
-        )
-    )
-    builder.row(
-        types.InlineKeyboardButton(
-            text="🔔 Мои уведомления", callback_data="notifications"
+            text="💰 Рассчитать зарплаты", callback_data=f"calculate_salary"
         )
     )
     builder.row(
         types.InlineKeyboardButton(
             text="🔐 Изменить Authorization токен",
-            callback_data="change_authorization|discord",
+            callback_data="change_authorization|gang",
         ),
         types.InlineKeyboardButton(
-            text="❓ Как найти Authorization header",
-            url="https://teletype.in/@akikora/FI4jHmqTp6s",
+            text="✏️ Редактировать id канала отчетов",
+            callback_data=f"edit_salary_channel",
         ),
     )
     builder.row(
-        types.InlineKeyboardButton(text="🔙 В главное меню", callback_data="main_menu")
+        types.InlineKeyboardButton(
+            text="🔙 Назад к 🪪 Фракции", callback_data="fractions_main"
+        )
     )
     return builder.as_markup(resize_keyboard=True)
