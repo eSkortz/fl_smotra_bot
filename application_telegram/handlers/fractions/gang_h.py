@@ -203,7 +203,7 @@ async def processing_summ(message: Message, state: FSMContext) -> None:
                 + f"👤 <@{key}> - {summ / total_count * value} руб. (Отыграно {value} капт(-а/-ов))\n"
             )
 
-        text = text + "-------------------------------\n🫦 **Maked by SmotraAssistant**"
+        text = text + "-------------------------------\n🫦 -# Maked By SmotraAssistant"
 
         await post_without_images(
             authorization=user_in_db.discord_token,
