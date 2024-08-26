@@ -7,7 +7,13 @@ from aiogram.fsm.context import FSMContext
 from datetime import datetime
 import base64
 
-from config import engine_async, BOT_TOKEN, NON_PREMIUM_TIMER, PREMIUM_TIMER
+from config import (
+    engine_async,
+    BOT_TOKEN,
+    NON_PREMIUM_TIMER,
+    PREMIUM_TIMER,
+    SYMBOLS_BLACKLIST,
+)
 from db.oop.alchemy_di_async import DBWorkerAsync
 from db.orm.schema_public import UserPointers, Users, DiscordAdds
 
@@ -173,6 +179,11 @@ async def add_change_text(callback: CallbackQuery, state: FSMContext) -> None:
 async def add_processing_text(message: Message, state: FSMContext) -> None:
     try:
         new_text = message.text
+        for symbol in new_text:
+            if symbol in SYMBOLS_BLACKLIST:
+                raise NotImplementedError(
+                    f"В текст обнаружен запрещенный символ ({SYMBOLS_BLACKLIST})"
+                )
         state_data = await state.get_data()
         id_to_delete = int(state_data["id_to_delete"])
         chapter_name = state_data["chapter_name"]
