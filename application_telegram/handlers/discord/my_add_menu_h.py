@@ -2,9 +2,11 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, input_file
 from aiogram.enums.parse_mode import ParseMode
 
-from config import engine_async
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Users, UserPointers, DiscordAdds
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
+from database.orm.public_users_pointers_model import UsersPointers
+from database.orm.public_discord_adds_model import DiscordAdds
 
 from handlers.main_h import sth_error
 from keyboards.discord import my_add_menu_k
@@ -13,7 +15,7 @@ from utils.func_utils import combine_images
 
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 
 
 @router.callback_query(F.data.startswith("discord_my_add"))
@@ -22,19 +24,19 @@ async def my_add_menu(callback: CallbackQuery, chapter_name: str = None) -> None
         if not chapter_name:
             chapter_name = callback.data.split("|")[1]
 
-        user_id = await db_worker.custom_orm_select(
+        user_id = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_id = user_id[0]
 
         pointer_model = CHAPTER_CLASSIFICATION[chapter_name]["pointer_model"]
-        pointer_in_db = await db_worker.custom_orm_select(
-            cls_from=pointer_model, where_params=[UserPointers.user_id == user_id]
+        pointer_in_db = await database_worker.custom_orm_select(
+            cls_from=pointer_model, where_params=[UsersPointers.user_id == user_id]
         )
         pointer_value: bool = pointer_in_db[0]
 
-        add_in_db = await db_worker.custom_orm_select(
+        add_in_db = await database_worker.custom_orm_select(
             cls_from=DiscordAdds,
             where_params=[
                 DiscordAdds.user_id == user_id,

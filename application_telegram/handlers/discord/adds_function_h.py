@@ -8,14 +8,16 @@ from datetime import datetime
 import base64
 
 from config import (
-    engine_async,
+    database_engine_async,
     BOT_TOKEN,
     NON_PREMIUM_TIMER,
     PREMIUM_TIMER,
     SYMBOLS_BLACKLIST,
 )
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import UserPointers, Users, DiscordAdds
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_pointers_model import UsersPointers
+from database.orm.public_users_model import Users
+from database.orm.public_discord_adds_model import DiscordAdds
 
 from handlers.main_h import sth_error
 from handlers.discord.my_add_menu_h import my_add_menu
@@ -23,7 +25,7 @@ from utils.text_utils import CHAPTER_CLASSIFICATION
 
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 bot = Bot(token=BOT_TOKEN)
 
 
@@ -42,25 +44,24 @@ async def add_on_off(callback: CallbackQuery) -> None:
             "pointer_column_name"
         ]
 
-        user_id = await db_worker.custom_orm_select(
+        user_id = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_id = user_id[0]
 
-        pointer_in_db = await db_worker.custom_orm_select(
-            cls_from=[UserPointers.id, pointer_model],
-            where_params=[UserPointers.user_id == user_id],
+        pointer_in_db = await database_worker.custom_orm_select(
+            cls_from=[UsersPointers.id, pointer_model],
+            where_params=[UsersPointers.user_id == user_id],
         )
         pointer_id, pointer_value = pointer_in_db[0][0], pointer_in_db[0][1]
 
         data_to_update = {
             "id": pointer_id,
             pointer_column_name: False if pointer_value else True,
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_orm_bulk_update(
-            cls_to=UserPointers, data=[data_to_update]
+        await database_worker.custom_orm_bulk_update(
+            cls_to=UsersPointers, data=[data_to_update]
         )
 
         await my_add_menu(callback=callback, chapter_name=chapter_name)
@@ -105,14 +106,14 @@ async def add_processing_timer(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=message.chat.id, message_id=id_to_delete)
         await message.delete()
 
-        user_in_db = await db_worker.custom_orm_select(
+        user_in_db = await database_worker.custom_orm_select(
             cls_from=Users,
             where_params=[Users.telegram_id == message.chat.id],
         )
         user_in_db: Users = user_in_db[0]
         user_id, is_user_have_premium = user_in_db.id, user_in_db.is_have_premium
 
-        add_in_db = await db_worker.custom_orm_select(
+        add_in_db = await database_worker.custom_orm_select(
             cls_from=DiscordAdds,
             where_params=[
                 DiscordAdds.user_id == user_id,
@@ -129,9 +130,8 @@ async def add_processing_timer(message: Message, state: FSMContext) -> None:
         data_to_update = {
             "id": add_in_db.id,
             "timer": new_timer,
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_orm_bulk_update(
+        await database_worker.custom_orm_bulk_update(
             cls_to=DiscordAdds, data=[data_to_update]
         )
 
@@ -146,13 +146,13 @@ async def add_change_text(callback: CallbackQuery, state: FSMContext) -> None:
     try:
         chapter_name = callback.data.split("|")[1]
 
-        user_id_in_db = await db_worker.custom_orm_select(
+        user_id_in_db = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_id = user_id_in_db[0]
 
-        discord_add_in_db = await db_worker.custom_orm_select(
+        discord_add_in_db = await database_worker.custom_orm_select(
             cls_from=DiscordAdds,
             where_params=[
                 DiscordAdds.user_id == user_id,
@@ -197,9 +197,8 @@ async def add_processing_text(message: Message, state: FSMContext) -> None:
         data_to_update = {
             "id": add_id,
             "text": new_text,
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_orm_bulk_update(
+        await database_worker.custom_orm_bulk_update(
             cls_to=DiscordAdds, data=[data_to_update]
         )
 
@@ -214,13 +213,13 @@ async def add_remove_photos(callback: CallbackQuery) -> None:
     try:
         chapter_name = callback.data.split("|")[1]
 
-        user_id = await db_worker.custom_orm_select(
+        user_id = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_id = user_id[0]
 
-        discord_add_in_db = await db_worker.custom_orm_select(
+        discord_add_in_db = await database_worker.custom_orm_select(
             cls_from=DiscordAdds,
             where_params=[
                 DiscordAdds.user_id == user_id,
@@ -232,9 +231,8 @@ async def add_remove_photos(callback: CallbackQuery) -> None:
         data_to_update = {
             "id": discord_add.id,
             "images": [],
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_orm_bulk_update(
+        await database_worker.custom_orm_bulk_update(
             cls_to=DiscordAdds, data=[data_to_update]
         )
 
@@ -249,13 +247,13 @@ async def add_attach_photo(callback: CallbackQuery, state: FSMContext) -> None:
     try:
         chapter_name = callback.data.split("|")[1]
 
-        user_id_in_db = await db_worker.custom_orm_select(
+        user_id_in_db = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_id = user_id_in_db[0]
 
-        discord_add_in_db = await db_worker.custom_orm_select(
+        discord_add_in_db = await database_worker.custom_orm_select(
             cls_from=DiscordAdds,
             where_params=[
                 DiscordAdds.user_id == user_id,
@@ -305,9 +303,8 @@ async def add_processing_photo(message: Message, state: FSMContext) -> None:
         data_to_update = {
             "id": add_id,
             "images": [*add_images, new_photo_base64],
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_orm_bulk_update(
+        await database_worker.custom_orm_bulk_update(
             cls_to=DiscordAdds, data=[data_to_update]
         )
 

@@ -6,9 +6,9 @@ from aiogram.fsm.context import FSMContext
 
 from datetime import datetime
 
-from config import engine_async, BOT_TOKEN
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Users
+from config import database_engine_async, BOT_TOKEN
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
 
 from handlers.main_h import sth_error
 from handlers.discord.discord_h import discord_main
@@ -16,7 +16,7 @@ from handlers.fractions.gang_h import gang_menu
 
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 bot = Bot(token=BOT_TOKEN)
 
 
@@ -28,7 +28,7 @@ class TokenGroup(StatesGroup):
 async def change_authorization(callback: CallbackQuery, state: FSMContext) -> None:
     try:
         scenario = callback.data.split("|")[1]
-        user_in_db = await db_worker.custom_orm_select(
+        user_in_db = await database_worker.custom_orm_select(
             cls_from=Users,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
@@ -67,9 +67,8 @@ async def processing_authorization(message: Message, state: FSMContext) -> None:
         data_to_update = {
             "id": user_id,
             "discord_token": new_token,
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_orm_bulk_update(cls_to=Users, data=[data_to_update])
+        await database_worker.custom_orm_bulk_update(cls_to=Users, data=[data_to_update])
 
         if scenario == "gang":
             await gang_menu(callback=callback)

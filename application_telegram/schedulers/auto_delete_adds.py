@@ -1,14 +1,15 @@
 import asyncio
 from datetime import datetime, timedelta
 
-from config import engine_async, DAYS_FOR_DELETE
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Users, SentDiscordAdds
+from config import database_engine_async, DAYS_FOR_DELETE
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
+from database.orm.public_sent_discord_adds_model import SentDiscordAdds
 
 from utils.discord_utils import delete_message
 
 
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 local_semaphore = asyncio.Semaphore(20)
 target_date = datetime.utcnow() - timedelta(days=DAYS_FOR_DELETE)
 
@@ -23,7 +24,7 @@ async def processing_task(
 
 
 async def auto_delete_discord_function() -> None:
-    messages = await db_worker.custom_orm_select(
+    messages = await database_worker.custom_orm_select(
         cls_from=SentDiscordAdds,
         where_params=[
             SentDiscordAdds.is_deleted == False,
@@ -42,7 +43,7 @@ async def auto_delete_discord_function() -> None:
         del message_dict["_sa_instance_state"]
         data_to_update.append(message_dict)
 
-        user_token = await db_worker.custom_orm_select(
+        user_token = await database_worker.custom_orm_select(
             cls_from=Users.discord_token,
             where_params=[Users.id == SentDiscordAdds.user_id],
         )
@@ -60,4 +61,6 @@ async def auto_delete_discord_function() -> None:
 
     await asyncio.gather(*task_list)
 
-    await db_worker.custom_orm_bulk_update(cls_to=SentDiscordAdds, data=data_to_update)
+    await database_worker.custom_orm_bulk_update(
+        cls_to=SentDiscordAdds, data=data_to_update
+    )

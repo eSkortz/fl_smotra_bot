@@ -2,19 +2,19 @@ from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import types
 
-from config import engine_async
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Cars
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_cars_model import Cars
 
 from utils.text_utils import batch_price_generator, CARS_CLASSIFICATION
 
 
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 
 
 async def get(car_mark: str, first_element_index: int) -> ReplyKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    cars = await db_worker.custom_orm_select(
+    cars = await database_worker.custom_orm_select(
         cls_from=Cars,
         where_params=[Cars.classification == car_mark],
         order_by=[Cars.price],

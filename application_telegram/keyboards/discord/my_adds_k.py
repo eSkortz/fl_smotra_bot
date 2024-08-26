@@ -2,24 +2,25 @@ from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import types
 from aiogram.types import Message
-from config import engine_async
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Users, UserPointers
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
+from database.orm.public_users_pointers_model import UsersPointers
 from utils.text_utils import BOOL_TO_STATUS_ADDS, CHAPTER_CLASSIFICATION
 
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 
 
 async def get(message: Message) -> ReplyKeyboardMarkup:
 
-    user_id = await db_worker.custom_orm_select(
+    user_id = await database_worker.custom_orm_select(
         cls_from=Users.id, where_params=[Users.telegram_id == message.chat.id]
     )
     user_id = user_id[0]
-    user_pointers = await db_worker.custom_orm_select(
-        cls_from=UserPointers, where_params=[UserPointers.user_id == user_id]
+    user_pointers = await database_worker.custom_orm_select(
+        cls_from=UsersPointers, where_params=[UsersPointers.user_id == user_id]
     )
-    user_pointers: UserPointers = user_pointers[0]
+    user_pointers: UsersPointers = user_pointers[0]
 
     builder = InlineKeyboardBuilder()
 

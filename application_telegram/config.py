@@ -7,17 +7,19 @@ from env_reader import app_config
 
 
 BOT_TOKEN = app_config.BOT_TOKEN.get_secret_value()
+ADMIN_TOKEN = ""
 
 DB_LOGIN = app_config.DB_LOGIN.get_secret_value()
 DB_PASSWORD = app_config.DB_PASSWORD.get_secret_value()
 DB_IP = app_config.DB_IP.get_secret_value()
 DB_NAME = app_config.DB_NAME.get_secret_value()
 
-DISCORD_CAPTION = ''
+DISCORD_CAPTION = ""
 REACTIONS_LIST = ["pUwu%3A760501989532237844/%40me"]
 
 SYMBOLS_BLACKLIST = ["#", "`", ">"]
 DAYS_FOR_DELETE = 2
+DAYS_FOR_OFF = 7
 NON_PREMIUM_TIMER = 180
 PREMIUM_TIMER = 60
 
@@ -96,10 +98,10 @@ def do_retry_on_fail(func):
     return wrapper
 
 
-engine = create_engine(
+database_engine = create_engine(
     f"postgresql+psycopg2://{DB_LOGIN}:{DB_PASSWORD}@{DB_IP}/{DB_NAME}",
 )
 
-engine_async = create_async_engine(
+database_engine_async = create_async_engine(
     f"postgresql+asyncpg://{DB_LOGIN}:{DB_PASSWORD}@{DB_IP}/{DB_NAME}",
 )

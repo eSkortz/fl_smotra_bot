@@ -6,16 +6,17 @@ from aiogram.fsm.context import FSMContext
 
 from datetime import datetime
 
-from config import engine_async, BOT_TOKEN
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Users, RentAdds
+from config import database_engine_async, BOT_TOKEN
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
+from database.orm.public_rent_adds_model import RentAdds
 
 from handlers.main_h import sth_error
 from handlers.rent.my_rents_h import my_rents
 
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 bot = Bot(token=BOT_TOKEN)
 
 
@@ -28,7 +29,7 @@ class RentGroup(StatesGroup):
 @router.callback_query(F.data == "add_rent_add")
 async def add_rent_add(callback: CallbackQuery, state: FSMContext) -> None:
     try:
-        user_id_in_db = await db_worker.custom_orm_select(
+        user_id_in_db = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
@@ -149,10 +150,8 @@ async def processing_text(message: Message, state: FSMContext) -> None:
             "number_of_gm": new_gm,
             "add_text": new_text,
             "contact_link": new_contact_link,
-            "created_at": datetime.utcnow(),
-            "last_check": datetime.utcnow(),
         }
-        await db_worker.custom_insert(cls_to=RentAdds, data=[data_to_insert])
+        await database_worker.custom_insert(cls_to=RentAdds, data=[data_to_insert])
 
         await my_rents(callback=callback)
 
@@ -165,7 +164,7 @@ async def delete_rent_add(callback: CallbackQuery) -> None:
     try:
         rent_add_id = int(callback.data.split("|")[1])
 
-        await db_worker.custom_orm_delete(
+        await database_worker.custom_orm_delete(
             cls_from=RentAdds, where_params=[RentAdds.id == rent_add_id]
         )
 

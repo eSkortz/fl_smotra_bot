@@ -4,12 +4,12 @@ from aiogram.types import CallbackQuery, FSInputFile
 from handlers.main_h import sth_error
 from keyboards.cars import mark_menu_k
 from utils.text_utils import CARS_CLASSIFICATION
-from config import engine_async
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Cars
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_cars_model import Cars
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 
 
 @router.callback_query(F.data.startswith("car_marks"))
@@ -21,7 +21,7 @@ async def car_marks(callback: CallbackQuery) -> None:
             car_mark=car_mark, first_element_index=first_element_index
         )
         photo = FSInputFile(f"src/cars/{car_mark}.png")
-        all_cars_by_mark = await db_worker.custom_orm_select(
+        all_cars_by_mark = await database_worker.custom_orm_select(
             cls_from=Cars, where_params=[Cars.classification == car_mark]
         )
         text = (

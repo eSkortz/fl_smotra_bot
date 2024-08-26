@@ -4,16 +4,17 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
-from config import engine_async, BOT_TOKEN
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Users, RentAdds
+from config import database_engine_async, BOT_TOKEN
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
+from database.orm.public_rent_adds_model import RentAdds
 
 from handlers.main_h import sth_error
 from keyboards.rent import find_rent_info_k, find_rent_list_k
 
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 bot = Bot(token=BOT_TOKEN)
 
 
@@ -44,13 +45,13 @@ async def find_rent_list(
             number_of_gm = int(callback.data.split("|")[1])
             page = int(callback.data.split("|")[2])
 
-        user_id = await db_worker.custom_orm_select(
+        user_id = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_id = user_id[0]
 
-        rent_add_list = await db_worker.custom_orm_select(
+        rent_add_list = await database_worker.custom_orm_select(
             cls_from=RentAdds, where_params=[RentAdds.number_of_gm == number_of_gm]
         )
 
@@ -70,13 +71,13 @@ async def find_rent_info(callback: CallbackQuery) -> None:
     try:
         rent_add_id = int(callback.data.split("|")[1])
 
-        user_id = await db_worker.custom_orm_select(
+        user_id = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_id = user_id[0]
 
-        rent_add_in_db = await db_worker.custom_orm_select(
+        rent_add_in_db = await database_worker.custom_orm_select(
             cls_from=RentAdds, where_params=[RentAdds.id == rent_add_id]
         )
         rent_add: RentAdds = rent_add_in_db[0]

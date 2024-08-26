@@ -5,13 +5,14 @@ from aiogram.enums.parse_mode import ParseMode
 from handlers.main_h import sth_error
 from keyboards.rent import my_rent_info_k
 
-from config import engine_async
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import RentAdds, Users
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_rent_adds_model import RentAdds
+from database.orm.public_users_model import Users
 
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 
 
 @router.callback_query(F.data.startswith("my_rent_info"))
@@ -19,13 +20,13 @@ async def my_rent_info(callback: CallbackQuery) -> None:
     try:
         rent_add_id = int(callback.data.split("|")[1])
 
-        user_id = await db_worker.custom_orm_select(
+        user_id = await database_worker.custom_orm_select(
             cls_from=Users.id,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_id = user_id[0]
 
-        user_rent_add = await db_worker.custom_orm_select(
+        user_rent_add = await database_worker.custom_orm_select(
             cls_from=RentAdds, where_params=[RentAdds.id == rent_add_id]
         )
         user_rent_add: RentAdds = user_rent_add[0]

@@ -5,18 +5,20 @@ import base64
 from PIL import Image
 from datetime import datetime
 
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Users, UserPointers, DiscordAdds
-from config import engine_async
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
+from database.orm.public_users_pointers_model import UsersPointers
+from database.orm.public_discord_adds_model import DiscordAdds
 
 from utils.text_utils import CHAPTER_CLASSIFICATION
 
 
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 
 
 async def auto_registration(message: Message) -> None:
-    user_in_db = await db_worker.custom_orm_select(
+    user_in_db = await database_worker.custom_orm_select(
         cls_from=Users, where_params=[Users.telegram_id == message.chat.id]
     )
 
@@ -24,21 +26,18 @@ async def auto_registration(message: Message) -> None:
         data_user = {
             "telegram_id": message.chat.id,
             "telegram_name": message.chat.username,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_insert(cls_to=Users, data=[data_user])
+        await database_worker.custom_insert(cls_to=Users, data=[data_user])
 
-        user_in_db = await db_worker.custom_orm_select(
+        user_in_db = await database_worker.custom_orm_select(
             cls_from=Users, where_params=[Users.telegram_id == message.chat.id]
         )
         user_in_db: Users = user_in_db[0]
 
         data_pointers = {
             "user_id": user_in_db.id,
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_insert(cls_to=UserPointers, data=[data_pointers])
+        await database_worker.custom_insert(cls_to=UsersPointers, data=[data_pointers])
 
         chapter_names = [key for key in CHAPTER_CLASSIFICATION.keys()]
 
@@ -46,12 +45,10 @@ async def auto_registration(message: Message) -> None:
             {
                 "user_id": user_in_db.id,
                 "chapter": chapter_name,
-                "updated_at": datetime.utcnow(),
-                "last_sent": datetime.utcnow(),
             }
             for chapter_name in chapter_names
         ]
-        await db_worker.custom_insert(cls_to=DiscordAdds, data=adds_data)
+        await database_worker.custom_insert(cls_to=DiscordAdds, data=adds_data)
 
 
 def combine_images(images_list: list) -> io.BytesIO:

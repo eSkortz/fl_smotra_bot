@@ -12,7 +12,7 @@ from sqlalchemy.dialects.postgresql import (
     VARCHAR,
     DATE,
     MONEY,
-    JSONB
+    JSONB,
 )
 from typing import Annotated
 import datetime
@@ -149,7 +149,4 @@ ListSmallintColumn = Annotated[
     mapped_column(SMALLINT),
 ]
 
-ListJsonbColumn = Annotated[
-    list[dict],
-    mapped_column(ARRAY(JSONB))
-]
+ListJsonbColumn = Annotated[list[dict], mapped_column(ARRAY(JSONB))]

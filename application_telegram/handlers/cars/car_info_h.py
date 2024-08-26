@@ -3,25 +3,25 @@ from aiogram.types import CallbackQuery, FSInputFile
 
 from handlers.main_h import sth_error
 from keyboards.cars import car_info_k
-from config import engine_async
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Cars
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_cars_model import Cars
 from utils.text_utils import generate_car_info_text
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 
 
 @router.callback_query(F.data.startswith("car_info"))
 async def car_marks(callback: CallbackQuery) -> None:
     try:
         car_id = int(callback.data.split("|")[1])
-        car_in_db = await db_worker.custom_orm_select(
+        car_in_db = await database_worker.custom_orm_select(
             cls_from=Cars, where_params=[Cars.id == car_id]
         )
         car_in_db: Cars = car_in_db[0]
 
-        all_cars_by_mark = await db_worker.custom_orm_select(
+        all_cars_by_mark = await database_worker.custom_orm_select(
             cls_from=Cars,
             where_params=[Cars.classification == car_in_db.classification],
             order_by=[Cars.price],

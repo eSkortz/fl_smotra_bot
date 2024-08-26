@@ -1,23 +1,23 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, FSInputFile
 
-from config import engine_async
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Fishing
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_fishing_model import Fishing
 
 from handlers.main_h import sth_error
 from keyboards.fishing import only_to_fishing_k
 
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 
 
 @router.callback_query(F.data.startswith("fish_info"))
 async def fishing_info(callback: CallbackQuery) -> None:
     try:
         depth_tag = int(callback.data.split("|")[1])
-        text = await db_worker.custom_orm_select(
+        text = await database_worker.custom_orm_select(
             cls_from=Fishing.text, where_params=[Fishing.depth == depth_tag]
         )
         text = text[0]

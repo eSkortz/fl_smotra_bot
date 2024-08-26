@@ -3,15 +3,18 @@ from datetime import datetime
 import io
 import base64
 
-from config import engine_async
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import DiscordAdds, UserPointers, Users, SentDiscordAdds
+from config import database_engine_async
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
+from database.orm.public_users_pointers_model import UsersPointers
+from database.orm.public_discord_adds_model import DiscordAdds
+from database.orm.public_sent_discord_adds_model import SentDiscordAdds
 
 from utils.discord_utils import post_with_images, post_without_images
 from utils.text_utils import CHAPTER_CLASSIFICATION
 
 
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 local_semaphore = asyncio.Semaphore(20)
 
 
@@ -20,12 +23,12 @@ async def send_by_chapter(
 ) -> None:
     async with semaphore:
 
-        user_in_db = await db_worker.custom_orm_select(
+        user_in_db = await database_worker.custom_orm_select(
             cls_from=Users, where_params=[Users.id == user_id]
         )
         user: Users = user_in_db[0]
 
-        discord_add_in_db = await db_worker.custom_orm_select(
+        discord_add_in_db = await database_worker.custom_orm_select(
             cls_from=DiscordAdds,
             where_params=[
                 DiscordAdds.user_id == user_id,
@@ -55,8 +58,8 @@ async def send_by_chapter(
                     channel_id=CHAPTER_CLASSIFICATION[chapter_name]["channel_id"],
                 )
 
-            data_to_update = {"id": discord_add.id, "last_sent": datetime.utcnow()}
-            await db_worker.custom_orm_bulk_update(
+            data_to_update = {"id": discord_add.id}
+            await database_worker.custom_orm_bulk_update(
                 cls_to=DiscordAdds, data=[data_to_update]
             )
 
@@ -64,14 +67,13 @@ async def send_by_chapter(
                 "user_id": user.id,
                 "message_id": response["id"],
                 "channel_id": CHAPTER_CLASSIFICATION[chapter_name]["channel_id"],
-                "sent_datetime": datetime.utcnow(),
             }
-            await db_worker.custom_insert(cls_to=SentDiscordAdds, data=[data_to_insert])
+            await database_worker.custom_insert(cls_to=SentDiscordAdds, data=[data_to_insert])
 
 
 async def processing_chapter(chapter_name: str, pointer_model) -> None:
-    data_by_pointer_in_db = await db_worker.custom_orm_select(
-        cls_from=[UserPointers.user_id, pointer_model]
+    data_by_pointer_in_db = await database_worker.custom_orm_select(
+        cls_from=[UsersPointers.user_id, pointer_model]
     )
     tasks_to_send = [
         asyncio.create_task(

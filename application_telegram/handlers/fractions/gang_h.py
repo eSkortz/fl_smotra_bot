@@ -6,9 +6,10 @@ from aiogram.fsm.context import FSMContext
 
 from datetime import datetime
 
-from config import engine_async, BOT_TOKEN
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Gangs, Users
+from config import database_engine_async, BOT_TOKEN
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_gangs_model import Gangs
+from database.orm.public_users_model import Users
 
 from handlers.main_h import sth_error
 from keyboards.fractions import gang_menu_k, calculate_confirmation_k
@@ -16,7 +17,7 @@ from utils.discord_utils import get_messages, post_without_images
 
 
 router = Router()
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 bot = Bot(token=BOT_TOKEN)
 
 
@@ -48,12 +49,12 @@ async def gang_menu(callback: CallbackQuery) -> None:
 @router.callback_query(F.data == "edit_salary_channel")
 async def edit_salary_channel(callback: CallbackQuery, state: FSMContext) -> None:
     try:
-        user_in_db = await db_worker.custom_orm_select(
+        user_in_db = await database_worker.custom_orm_select(
             cls_from=Users,
             where_params=[Users.telegram_id == callback.message.chat.id],
         )
         user_in_db: Users = user_in_db[0]
-        gang_in_db = await db_worker.custom_orm_select(
+        gang_in_db = await database_worker.custom_orm_select(
             cls_from=Gangs, where_params=[Gangs.user_id == user_in_db.id]
         )
         gang_in_db: Gangs = gang_in_db[0]
@@ -89,9 +90,8 @@ async def processing_path(message: Message, state: FSMContext) -> None:
         data_to_update = {
             "id": gang_id,
             "capt_chat_id": new_chat_id,
-            "updated_at": datetime.utcnow(),
         }
-        await db_worker.custom_orm_bulk_update(cls_to=Gangs, data=[data_to_update])
+        await database_worker.custom_orm_bulk_update(cls_to=Gangs, data=[data_to_update])
 
         await gang_menu(callback=callback)
 
@@ -100,7 +100,7 @@ async def processing_path(message: Message, state: FSMContext) -> None:
 
 
 @router.callback_query(F.data == "calculate_salary")
-async def calculate_salary(callback: CallbackQuery, state: FSMContext) -> None:
+async def calculate_salary(callback: CallbackQuery) -> None:
     try:
         await callback.message.delete()
         markup_inline = calculate_confirmation_k.get()
@@ -167,11 +167,11 @@ async def processing_summ(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=message.chat.id, message_id=id_to_delete)
         await message.delete()
 
-        user_in_db = await db_worker.custom_orm_select(
+        user_in_db = await database_worker.custom_orm_select(
             cls_from=Users, where_params=[Users.telegram_id == message.chat.id]
         )
         user_in_db: Users = user_in_db[0]
-        gang_in_db = await db_worker.custom_orm_select(
+        gang_in_db = await database_worker.custom_orm_select(
             cls_from=Gangs, where_params=[Gangs.user_id == user_in_db.id]
         )
         gang_in_db: Gangs = gang_in_db[0]

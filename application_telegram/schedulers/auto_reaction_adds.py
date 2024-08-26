@@ -1,13 +1,14 @@
 import asyncio
 
-from config import engine_async, REACTIONS_LIST
-from db.oop.alchemy_di_async import DBWorkerAsync
-from db.orm.schema_public import Users, SentDiscordAdds
+from config import database_engine_async, REACTIONS_LIST
+from database.oop.database_worker_async import DatabaseWorkerAsync
+from database.orm.public_users_model import Users
+from database.orm.public_sent_discord_adds_model import SentDiscordAdds
 
 from utils.discord_utils import put_reaction
 
 
-db_worker = DBWorkerAsync(engine_async)
+database_worker = DatabaseWorkerAsync(database_engine_async)
 local_semaphore = asyncio.Semaphore(20)
 
 
@@ -33,10 +34,10 @@ async def processing_symbol(
 
 
 async def auto_put_reactions_function() -> None:
-    tokens = await db_worker.custom_orm_select(
+    tokens = await database_worker.custom_orm_select(
         cls_from=Users.discord_token, where_params=[Users.discord_token != None]
     )
-    messages = await db_worker.custom_orm_select(
+    messages = await database_worker.custom_orm_select(
         cls_from=SentDiscordAdds, where_params=[SentDiscordAdds.is_reaction == False]
     )
 
@@ -62,4 +63,4 @@ async def auto_put_reactions_function() -> None:
         del message_dict["_sa_instance_state"]
         data_to_update.append(message_dict)
 
-    await db_worker.custom_orm_bulk_update(cls_to=SentDiscordAdds, data=data_to_update)
+    await database_worker.custom_orm_bulk_update(cls_to=SentDiscordAdds, data=data_to_update)
