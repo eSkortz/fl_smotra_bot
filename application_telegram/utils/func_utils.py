@@ -3,6 +3,7 @@ from aiogram.types import Message
 import io
 import base64
 from PIL import Image
+from datetime import datetime
 
 from db.oop.alchemy_di_async import DBWorkerAsync
 from db.orm.schema_public import Users, UserPointers, DiscordAdds
@@ -23,6 +24,8 @@ async def auto_registration(message: Message) -> None:
         data_user = {
             "telegram_id": message.chat.id,
             "telegram_name": message.chat.username,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow(),
         }
         await db_worker.custom_insert(cls_to=Users, data=[data_user])
 
@@ -33,6 +36,7 @@ async def auto_registration(message: Message) -> None:
 
         data_pointers = {
             "user_id": user_in_db.id,
+            "updated_at": datetime.utcnow(),
         }
         await db_worker.custom_insert(cls_to=UserPointers, data=[data_pointers])
 
@@ -42,6 +46,8 @@ async def auto_registration(message: Message) -> None:
             {
                 "user_id": user_in_db.id,
                 "chapter": chapter_name,
+                "updated_at": datetime.utcnow(),
+                "last_sent": datetime.utcnow(),
             }
             for chapter_name in chapter_names
         ]

@@ -4,6 +4,8 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
+from datetime import datetime
+
 from config import engine_async, BOT_TOKEN
 from db.oop.alchemy_di_async import DBWorkerAsync
 from db.orm.schema_public import Users, RentAdds
@@ -147,6 +149,8 @@ async def processing_text(message: Message, state: FSMContext) -> None:
             "number_of_gm": new_gm,
             "add_text": new_text,
             "contact_link": new_contact_link,
+            "created_at": datetime.utcnow(),
+            "last_check": datetime.utcnow(),
         }
         await db_worker.custom_insert(cls_to=RentAdds, data=[data_to_insert])
 

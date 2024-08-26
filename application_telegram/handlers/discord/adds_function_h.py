@@ -57,6 +57,7 @@ async def add_on_off(callback: CallbackQuery) -> None:
         data_to_update = {
             "id": pointer_id,
             pointer_column_name: False if pointer_value else True,
+            "updated_at": datetime.utcnow(),
         }
         await db_worker.custom_orm_bulk_update(
             cls_to=UserPointers, data=[data_to_update]

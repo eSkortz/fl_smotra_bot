@@ -64,6 +64,7 @@ async def send_by_chapter(
                 "user_id": user.id,
                 "message_id": response["id"],
                 "channel_id": CHAPTER_CLASSIFICATION[chapter_name]["channel_id"],
+                "sent_datetime": datetime.utcnow(),
             }
             await db_worker.custom_insert(cls_to=SentDiscordAdds, data=[data_to_insert])
 
