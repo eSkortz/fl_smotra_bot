@@ -1,5 +1,6 @@
 from aiogram import Router, F
-from aiogram.types import CallbackQuery, FSInputFile
+from aiogram.types import CallbackQuery
+from aiogram.enums.parse_mode import ParseMode
 
 from config import database_engine_async
 from database.oop.database_worker_async import DatabaseWorkerAsync
@@ -22,10 +23,11 @@ async def fishing_info(callback: CallbackQuery) -> None:
         )
         text = text[0]
         markup_inline = only_to_fishing_k.get()
-        photo = FSInputFile("src/fishing.png")
         await callback.message.delete()
-        await callback.message.answer_photo(
-            photo=photo, caption=text, reply_markup=markup_inline
+        await callback.message.answer(
+            text=text,
+            reply_markup=markup_inline,
+            parse_mode=ParseMode.MARKDOWN_V2,
         )
     except Exception as exception:
         await sth_error(callback.message, exception)
