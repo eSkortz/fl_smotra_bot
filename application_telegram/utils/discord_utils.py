@@ -22,7 +22,7 @@ async def post_with_images(
         async with session.post(
             url=f"https://discord.com/api/v9/channels/{channel_id}/messages",
             headers=headers,
-            data=images,
+            data=form_data,
         ) as response:
             return await response.json()
 
