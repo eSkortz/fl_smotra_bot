@@ -17,19 +17,12 @@ async def post_with_images(
                 filename=file_name,
                 content_type="application/octet-stream",
             )
+        form_data.add_field("content", f"{text}\n\n{DISCORD_CAPTION}")
 
         async with session.post(
             url=f"https://discord.com/api/v9/channels/{channel_id}/messages",
             headers=headers,
             data=images,
-        ) as response:
-            response = await response.json()
-            message_id = response["id"]
-        body = {"content": f"{text}\n\n{DISCORD_CAPTION}"}
-        async with session.patch(
-            url=f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}",
-            headers=headers,
-            json=body,
         ) as response:
             return await response.json()
 
