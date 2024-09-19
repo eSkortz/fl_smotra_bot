@@ -12,10 +12,10 @@ async def post_with_images(
         form_data = aiohttp.FormData()
         for file_name, file_content in images:
             form_data.add_field(
-                "files",
+                file_name,
                 file_content,
                 filename=file_name,
-                content_type="application/octet-stream",
+                content_type="multipart/form-data",
             )
         form_data.add_field("content", f"{text}\n\n{DISCORD_CAPTION}")
 
