@@ -23,7 +23,9 @@ class DiscordAdds(Base):
     text: Mapped[TextColumn] = mapped_column(nullable=False, default="")
     images: Mapped[ListTextColumn] = mapped_column(nullable=False, default=[])
     timer: Mapped[IntegerColumn] = mapped_column(nullable=False, default=180)
-    last_sent: Mapped[TimestampWTColumn] = mapped_column(nullable=True)
+    last_sent: Mapped[TimestampWTColumn] = mapped_column(
+        nullable=True, default=func.now()
+    )
     created_at: Mapped[TimestampWTColumn] = mapped_column(
         nullable=True, default=func.now()
     )
