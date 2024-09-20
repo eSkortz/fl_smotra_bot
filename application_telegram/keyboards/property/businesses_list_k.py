@@ -7,13 +7,13 @@ from typing import List
 from database.orm.public_businesses_model import Businesses
 
 
-async def get(businesses_list: List[Businesses]) -> ReplyKeyboardMarkup:
+def get(businesses_list: List[Businesses]) -> ReplyKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for business in businesses_list:
         builder.row(
             types.InlineKeyboardButton(
                 text=(
-                    f"🏬 {business.name} {f'({business.tasks_count} пор.)' if business.tasks_count < 9 else '🛑 Слетел в гос.'}"
+                    f"🏬 {business.name} {f'({business.tasks_count} зад. / {business.balance} руб.)' if business.tasks_count < 9 else '(🛑 Слетел в гос.)'}"
                 ),
                 callback_data=f"business_menu|{business.id}",
             )
@@ -22,12 +22,17 @@ async def get(businesses_list: List[Businesses]) -> ReplyKeyboardMarkup:
         builder.row(
             types.InlineKeyboardButton(
                 text=f"➕ Добавить новый бизнес", callback_data=f"add_business"
-            )
+            ),
         )
     builder.row(
         types.InlineKeyboardButton(
-            text=f"♻️ Выполнил задания на всех бизнесах", callback_data=f"add_business"
-        )
+            text=f"♻️ Выполнил задания на всех бизнесах",
+            callback_data="business_refresh_tasks|0",
+        ),
+        types.InlineKeyboardButton(
+            text=f"💸 Снял деньги со всех бизнесов",
+            callback_data="business_cash_out|0",
+        ),
     )
     builder.row(
         types.InlineKeyboardButton(

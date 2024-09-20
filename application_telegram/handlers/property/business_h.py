@@ -8,7 +8,7 @@ from typing import List
 
 from config import database_engine_async, BOT_TOKEN
 from handlers.main_h import sth_error
-from keyboards.property import business_menu_k, businesses_list_k, only_to_business_k
+from keyboards.property import business_menu_k, businesses_list_k, only_to_businesses_k
 
 from database.oop.database_worker_async import DatabaseWorkerAsync
 from database.orm.public_businesses_model import Businesses
@@ -27,8 +27,8 @@ class BusinessGroup(StatesGroup):
     waiting_to_balance = State()
 
 
-@router.callback_query(F.data.startswith("business_list"))
-async def business_list(callback: CallbackQuery) -> None:
+@router.callback_query(F.data.startswith("businesses_list"))
+async def businesses_list(callback: CallbackQuery) -> None:
     try:
         user: Users = await database_worker.custom_orm_select(
             cls_from=Users,
@@ -44,9 +44,9 @@ async def business_list(callback: CallbackQuery) -> None:
 
         text = (
             ">🏬 Это раздел __*Бизнесы*__, здесь отображаются бизнесы находящиеся у вас во владении\.\n\n"
-            ">Обратите внимание, что вам автоматически будут приходить уведомления, когда на вашем бизнесе будет 4/7/8 заданий\.\n"
-            ">В первом случае о том, что он перестал приносить доход, в остальных о том, что в ближайшее время он может слететь в гос\.\n"
-            ">Актуальное количество заданий на бизнесе и его баланс можно посмотреть в списке, отображенном ниже, или в меню самого бизнеса\."
+            ">❗️Обратите внимание, что вам автоматически будут приходить *уведомления*, когда на вашем бизнесе будет *4/7/8 заданий*\.\n\n"
+            ">❗️В первом случае о том, что он перестал приносить доход, в остальных о том, что в ближайшее время он может слететь в гос\.\n\n"
+            ">❗️Актуальное количество заданий на бизнесе и его баланс можно посмотреть в списке, отображенном ниже, или в меню самого бизнеса\."
         )
 
         await callback.message.delete()
@@ -69,10 +69,10 @@ async def business_menu(callback: CallbackQuery) -> None:
         markup_inline = business_menu_k.get(business=business)
 
         text = (
-            f">🏬 *{business.name}*\n"
-            f">Кол\-во заданий: *{business.tasks_count} шт\.*\n"
-            f">Доходность: *{business.profit} руб\./день*\n"
-            f">Баланс: *{business.balance} руб\.*"
+            f">🏬 *{business.name}*\n\n"
+            f">__Кол\-во заданий:__ *{business.tasks_count} шт\.*\n"
+            f">__Доходность:__ *{business.profit} руб\./день*\n"
+            f">__Баланс:__ *{business.balance} руб\.*"
         )
 
         await callback.message.delete()
@@ -90,7 +90,7 @@ async def business_remove(callback: CallbackQuery) -> None:
         await database_worker.custom_delete_all(
             cls_from=Businesses, where_params=[Businesses.id == business_id]
         )
-        await business_menu(callback=callback)
+        await businesses_list(callback=callback)
     except Exception as exception:
         await sth_error(callback.message, exception)
 
@@ -114,7 +114,7 @@ async def business_refresh_tasks(callback: CallbackQuery) -> None:
                 cls_to=Businesses,
                 data=[{"id": id, "tasks_count": 0} for id in business_ids],
             )
-            await business_list(callback=callback)
+            await businesses_list(callback=callback)
         else:
             await database_worker.custom_orm_bulk_update(
                 cls_to=Businesses, data=[{"id": business_id, "tasks_count": 0}]
@@ -143,7 +143,7 @@ async def business_cash_out(callback: CallbackQuery) -> None:
                 cls_to=Businesses,
                 data=[{"id": id, "balance": 0} for id in business_ids],
             )
-            await business_list(callback=callback)
+            await businesses_list(callback=callback)
         else:
             await database_worker.custom_orm_bulk_update(
                 cls_to=Businesses, data=[{"id": business_id, "balance": 0}]
@@ -158,7 +158,7 @@ async def add_business(callback: CallbackQuery, state: FSMContext) -> None:
     try:
         await callback.message.delete()
         sent_message = await callback.message.answer(
-            text=">✏️ Введите название для вашего бизнеса",
+            text="✏️ Введите название для вашего бизнеса",
             parse_mode=ParseMode.MARKDOWN_V2,
         )
         await state.set_state(BusinessGroup.waiting_to_name)
@@ -179,7 +179,7 @@ async def processing_name(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=message.chat.id, message_id=id_to_delete)
 
         sent_message = await message.answer(
-            text=">✏️ Введите доходность вашего бизнеса \(целое число без точек и запятых, например \- 30000\)",
+            text="✏️ Введите доходность вашего бизнеса \(целое число без точек и запятых, например \- 30000\)",
             parse_mode=ParseMode.MARKDOWN_V2,
         )
         await state.set_state(BusinessGroup.waiting_to_profit)
@@ -200,7 +200,7 @@ async def processing_profit(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=message.chat.id, message_id=id_to_delete)
 
         sent_message = await message.answer(
-            text=">✏️ Введите кол\-во заданий на бизнесе в данный момент",
+            text="✏️ Введите кол\-во заданий на бизнесе в данный момент",
             parse_mode=ParseMode.MARKDOWN_V2,
         )
         await state.set_state(BusinessGroup.waiting_to_tasks_count)
@@ -221,7 +221,7 @@ async def processing_tasks_count(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=message.chat.id, message_id=id_to_delete)
 
         sent_message = await message.answer(
-            text=">✏️ Введите текущий баланс бизнеса", parse_mode=ParseMode.MARKDOWN_V2
+            text="✏️ Введите текущий баланс бизнеса", parse_mode=ParseMode.MARKDOWN_V2
         )
         await state.set_state(BusinessGroup.waiting_to_balance)
         await state.update_data(
@@ -259,9 +259,9 @@ async def processing_balance(message: Message, state: FSMContext) -> None:
         }
         await database_worker.custom_insert(cls_to=Businesses, data=[data_to_insert])
 
-        markup_inline = only_to_business_k.get()
+        markup_inline = only_to_businesses_k.get()
         await message.answer(
-            text=(">✅ Бизнес успешно создан"),
+            text=("✅ Бизнес успешно создан"),
             reply_markup=markup_inline,
             parse_mode=ParseMode.MARKDOWN_V2,
         )

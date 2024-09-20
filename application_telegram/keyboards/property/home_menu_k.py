@@ -5,18 +5,16 @@ from aiogram import types
 from database.orm.public_homes_model import Homes
 
 
-async def get(home: Homes) -> ReplyKeyboardMarkup:
+def get(home: Homes) -> ReplyKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
             text=f"♻️ Пополнил до макс. баланса",
             callback_data=f"home_balance|{home.id}",
-        )
-    )
-    builder.row(
+        ),
         types.InlineKeyboardButton(
             text=f"🗑 Удалить дом", callback_data=f"home_remove|{home.id}"
-        )
+        ),
     )
     builder.row(
         types.InlineKeyboardButton(

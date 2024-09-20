@@ -11,7 +11,8 @@ from schedulers.auto_reaction_adds import auto_put_reactions_function
 from schedulers.auto_delete_adds import auto_delete_discord_function
 from schedulers.auto_notify_discord import auto_notify_discord_function
 from schedulers.auto_off_adds import auto_off_adds_function
-from schedulers.auto_check_property import auto_check_property_function
+from schedulers.auto_check_homes import auto_check_homes_function
+from schedulers.auto_check_businesses import auto_check_businesses_function
 
 
 from handlers import commands_h, main_h, premium_h, support_h
@@ -33,7 +34,7 @@ from handlers.rent import (
     find_rent_h,
 )
 from handlers.fractions import fractions_h, family_h, gang_h
-from handlers.property import property_h
+from handlers.property import property_h, business_h, homes_h
 
 
 logging.basicConfig(level=logging.INFO)
@@ -46,10 +47,13 @@ scheduler = AsyncIOScheduler()
 async def main() -> None:
     scheduler.add_job(auto_sender_discord_function, trigger="interval", minutes=1)
     # scheduler.add_job(auto_put_reactions_function, trigger="interval", seconds=600)
-    # scheduler.add_job(auto_delete_discord_function, trigger="interval", seconds=6000)
+    scheduler.add_job(auto_delete_discord_function, trigger="interval", minutes=600)
     scheduler.add_job(auto_notify_discord_function, trigger="interval", minutes=2)
     scheduler.add_job(auto_off_adds_function, trigger="interval", minutes=600)
-    # scheduler.add_job(auto_check_property_function, trigger="cron", hour=7, minute=0)
+    scheduler.add_job(auto_check_businesses_function, trigger="cron", day_of_week="mon", hour=7, minute=0)
+    scheduler.add_job(auto_check_businesses_function, trigger="cron", day_of_week="wed", hour=7, minute=0)
+    scheduler.add_job(auto_check_businesses_function, trigger="cron", day_of_week="fri", hour=7, minute=0)
+    scheduler.add_job(auto_check_homes_function, trigger="cron", hour=7, minute=0)
     dp.include_routers(
         commands_h.router,
         main_h.router,
@@ -75,6 +79,8 @@ async def main() -> None:
         fractions_h.router,
         family_h.router,
         gang_h.router,
+        business_h.router,
+        homes_h.router,
     )
     await bot.delete_webhook(drop_pending_updates=True)
 
