@@ -4,7 +4,7 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
-from config import database_engine_async, BOT_TOKEN
+from config import database_engine_async, TELEGRAM_TOKEN
 from database.oop.database_worker_async import DatabaseWorkerAsync
 from database.orm.public_users_model import Users
 from database.orm.public_rent_adds_model import RentAdds
@@ -15,7 +15,7 @@ from keyboards.rent import find_rent_info_k, find_rent_list_k
 
 router = Router()
 database_worker = DatabaseWorkerAsync(database_engine_async)
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=TELEGRAM_TOKEN)
 
 
 class FindRentGroup(StatesGroup):

@@ -2,7 +2,7 @@ from aiogram import Bot
 import asyncio
 from typing import List
 
-from config import database_engine_async, BOT_TOKEN
+from config import database_engine_async, TELEGRAM_TOKEN
 
 from database.oop.database_worker_async import DatabaseWorkerAsync
 from database.orm.public_businesses_model import Businesses
@@ -10,7 +10,7 @@ from database.orm.public_users_model import Users
 
 
 database_worker = DatabaseWorkerAsync(database_engine_async)
-bot = Bot(BOT_TOKEN)
+bot = Bot(TELEGRAM_TOKEN)
 
 
 async def notify_user(business: Businesses) -> None:

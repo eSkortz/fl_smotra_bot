@@ -7,8 +7,8 @@ services:
       context: ./application_telegram
       dockerfile: Dockerfile
     environment:
-      - BOT_TOKEN=${BOT_TOKEN}
-      - DB_LOGIN=${DB_LOGIN}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_IP=${DB_IP}
-      - DB_NAME=${DB_NAME}
+      - TELEGRAM_TOKEN=${BOT_TOKEN}
+      - DATABASE_LOGIN=${DB_LOGIN}
+      - DATABASE_PASSWORD=${DB_PASSWORD}
+      - DATABASE_IP=${DB_IP}
+      - DATABASE_NAME=${DB_NAME}

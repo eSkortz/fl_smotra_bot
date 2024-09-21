@@ -4,7 +4,7 @@ from aiogram import types
 import asyncio
 from typing import List
 
-from config import database_engine_async, ADMIN_TOKEN, BOT_TOKEN
+from config import database_engine_async, ADMIN_DISCORD_TOKEN, TELEGRAM_TOKEN
 from keyboards import link_and_main_k
 
 from database.oop.database_worker_async import DatabaseWorkerAsync
@@ -16,7 +16,7 @@ from utils.text_utils import CHAPTER_CLASSIFICATION
 
 
 database_worker = DatabaseWorkerAsync(database_engine_async)
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=TELEGRAM_TOKEN)
 
 
 async def send_notify_to_user(
@@ -41,7 +41,7 @@ async def auto_notify_discord_function() -> None:
     all_messages = []
     for value in CHAPTER_CLASSIFICATION.values():
         messages = await get_messages(
-            authorization=ADMIN_TOKEN, channel_id=value["channel_id"]
+            authorization=ADMIN_DISCORD_TOKEN, channel_id=value["channel_id"]
         )
         all_messages = [*all_messages, *messages]
 

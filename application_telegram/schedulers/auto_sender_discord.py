@@ -2,6 +2,7 @@ import asyncio
 from datetime import datetime
 import io
 import base64
+import random
 
 from config import database_engine_async
 from database.oop.database_worker_async import DatabaseWorkerAsync
@@ -23,19 +24,18 @@ async def send_by_chapter(
 ) -> None:
     async with semaphore:
 
-        user_in_db = await database_worker.custom_orm_select(
-            cls_from=Users, where_params=[Users.id == user_id]
+        user: Users = await database_worker.custom_orm_select(
+            cls_from=Users, where_params=[Users.id == user_id], get_unpacked=True
         )
-        user: Users = user_in_db[0]
 
-        discord_add_in_db = await database_worker.custom_orm_select(
+        discord_add: DiscordAdds = await database_worker.custom_orm_select(
             cls_from=DiscordAdds,
             where_params=[
                 DiscordAdds.user_id == user_id,
                 DiscordAdds.chapter == chapter_name,
             ],
+            get_unpacked=True,
         )
-        discord_add: DiscordAdds = discord_add_in_db[0]
 
         time_difference = datetime.utcnow() - discord_add.last_sent
         time_difference = time_difference.total_seconds() // 60
@@ -58,7 +58,20 @@ async def send_by_chapter(
                     channel_id=CHAPTER_CLASSIFICATION[chapter_name]["channel_id"],
                 )
 
-            data_to_update = {"id": discord_add.id}
+            timer_range = {
+                range(60, 90): lambda: random.randint(60, 89),
+                range(90, 120): lambda: random.randint(90, 119),
+                range(120, 150): lambda: random.randint(120, 149),
+                range(150, 180): lambda: random.randint(150, 179),
+                range(180, 240): lambda: random.randint(180, 239),
+                range(240, 480): lambda: random.randint(240, 479),
+                range(480, 1001): lambda: random.randint(480, 1000),
+            }
+            for key, value in timer_range.items():
+                if discord_add.timer in key:
+                    new_timer = value()
+
+            data_to_update = {"id": discord_add.id, "timer": new_timer}
             await database_worker.custom_orm_bulk_update(
                 cls_to=DiscordAdds, data=[data_to_update]
             )
@@ -68,7 +81,9 @@ async def send_by_chapter(
                 "message_id": response["id"],
                 "channel_id": CHAPTER_CLASSIFICATION[chapter_name]["channel_id"],
             }
-            await database_worker.custom_insert(cls_to=SentDiscordAdds, data=[data_to_insert])
+            await database_worker.custom_insert(
+                cls_to=SentDiscordAdds, data=[data_to_insert]
+            )
 
 
 async def processing_chapter(chapter_name: str, pointer_model) -> None:

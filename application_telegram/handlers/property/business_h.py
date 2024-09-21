@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 
 from typing import List
 
-from config import database_engine_async, BOT_TOKEN
+from config import database_engine_async, TELEGRAM_TOKEN
 from handlers.main_h import sth_error
 from keyboards.property import business_menu_k, businesses_list_k, only_to_businesses_k
 
@@ -17,7 +17,7 @@ from database.orm.public_users_model import Users
 
 router = Router()
 database_worker = DatabaseWorkerAsync(database_engine_async)
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=TELEGRAM_TOKEN)
 
 
 class BusinessGroup(StatesGroup):

@@ -9,7 +9,7 @@ import base64
 
 from config import (
     database_engine_async,
-    BOT_TOKEN,
+    TELEGRAM_TOKEN,
     NON_PREMIUM_TIMER,
     PREMIUM_TIMER,
     SYMBOLS_BLACKLIST,
@@ -26,7 +26,7 @@ from utils.text_utils import CHAPTER_CLASSIFICATION
 
 router = Router()
 database_worker = DatabaseWorkerAsync(database_engine_async)
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=TELEGRAM_TOKEN)
 
 
 class AddGroup(StatesGroup):
