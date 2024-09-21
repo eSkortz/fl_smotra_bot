@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - TELEGRAM_TOKEN=${BOT_TOKEN}
+      - ADMIN_DISCORD_TOKEN=${ADMIN_DISCORD_TOKEN}
       - DATABASE_LOGIN=${DB_LOGIN}
       - DATABASE_PASSWORD=${DB_PASSWORD}
       - DATABASE_IP=${DB_IP}
